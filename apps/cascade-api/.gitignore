@@ -1,0 +1,13 @@
+# Prisma generated client — rebuilt via `prisma generate` in CI / local setup
+prisma/generated/
+
+# Coverage output
+coverage/
+
+# Build output
+dist/
+
+# Environment files (copy from .env.example)
+.env
+.env.local
+.env.*.local

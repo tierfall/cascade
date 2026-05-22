@@ -19,6 +19,8 @@ export default tseslint.config(
       '**/test-results/**',
       'apps/cascade-docs/.source/**',
       'apps/cascade-api/prisma/generated/**',
+      // Nx-generated webpack config uses CJS require/module — ignore for now.
+      'apps/cascade-api/webpack.config.js',
     ],
   },
   eslint.configs.recommended,
@@ -64,6 +66,14 @@ export default tseslint.config(
   {
     files: ['packages/cascade-cli/**/*.ts'],
     rules: { 'no-console': 'off' },
+  },
+  // NestJS apps use empty decorated classes (@Module, @Controller) as module containers.
+  // The no-extraneous-class rule must allow decorated classes for these apps.
+  {
+    files: ['apps/cascade-api/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-extraneous-class': ['error', { allowWithDecorator: true }],
+    },
   },
   // Platform-neutral packages: ban DOM/Node/React imports.
   // Enforces spec §3.2: cascade-tokens, cascade-core, cascade-sdk must remain pure TS

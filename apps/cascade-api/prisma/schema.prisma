@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin") // v0.1 is single-admin; multi-tenant is v0.5
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Workflow {
+  id            String   @id @default(cuid())
+  name          String
+  schemaVersion String   @default("1.0.0")
+  definition    Json
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  runs          Run[]
+
+  @@index([createdAt])
+}
+
+model Run {
+  id             String          @id @default(cuid())
+  workflowId     String
+  workflow       Workflow        @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  status         String // queued | running | success | error
+  inputPayload   Json?
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  costUsd        Decimal?        @db.Decimal(10, 6)
+  nodeExecutions NodeExecution[]
+  createdAt      DateTime        @default(now())
+
+  @@index([workflowId, createdAt])
+}
+
+model NodeExecution {
+  id         String    @id @default(cuid())
+  runId      String
+  run        Run       @relation(fields: [runId], references: [id], onDelete: Cascade)
+  nodeId     String
+  status     String // queued | running | success | error
+  tier       Int? // which TierFall tier handled this node
+  inputJson  Json?
+  outputJson Json?
+  startedAt  DateTime?
+  finishedAt DateTime?
+  costUsd    Decimal?  @db.Decimal(10, 6)
+  errorJson  Json?
+
+  @@index([runId])
+}
+
+model EncryptedCredential {
+  id         String   @id @default(cuid())
+  name       String   @unique
+  ciphertext Bytes
+  iv         Bytes
+  authTag    Bytes
+  createdAt  DateTime @default(now())
+}
