@@ -52,11 +52,13 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/test/**/*.ts'],
+    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/test/**/*.ts', '**/test/**/*.tsx'],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/dot-notation': 'off',
     },
   },
   {
@@ -84,11 +86,20 @@ export default tseslint.config(
             { name: 'fs', message: 'platform-neutral packages cannot import node:fs' },
             { name: 'path', message: 'platform-neutral packages cannot import node:path' },
             { name: 'process', message: 'platform-neutral packages cannot import node:process' },
-            { name: 'child_process', message: 'platform-neutral packages cannot import node:child_process' },
+            {
+              name: 'child_process',
+              message: 'platform-neutral packages cannot import node:child_process',
+            },
           ],
           patterns: [
-            { group: ['node:*'], message: 'platform-neutral packages cannot import node:* modules' },
-            { group: ['react-native', 'react-native/*'], message: 'tokens/core/sdk must be cross-platform; do not import RN here' },
+            {
+              group: ['node:*'],
+              message: 'platform-neutral packages cannot import node:* modules',
+            },
+            {
+              group: ['react-native', 'react-native/*'],
+              message: 'tokens/core/sdk must be cross-platform; do not import RN here',
+            },
             { group: ['@nestjs/*'], message: 'platform-neutral packages cannot import NestJS' },
           ],
         },
@@ -98,8 +109,14 @@ export default tseslint.config(
         { name: 'window', message: 'platform-neutral packages cannot reference window' },
         { name: 'document', message: 'platform-neutral packages cannot reference document' },
         { name: 'navigator', message: 'platform-neutral packages cannot reference navigator' },
-        { name: '__dirname', message: 'platform-neutral packages cannot reference __dirname (Node-only)' },
-        { name: '__filename', message: 'platform-neutral packages cannot reference __filename (Node-only)' },
+        {
+          name: '__dirname',
+          message: 'platform-neutral packages cannot reference __dirname (Node-only)',
+        },
+        {
+          name: '__filename',
+          message: 'platform-neutral packages cannot reference __filename (Node-only)',
+        },
       ],
     },
   },
