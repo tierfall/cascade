@@ -8,6 +8,7 @@ const withMDX = createMDX();
 /** @type {import('next').NextConfig} */
 const config = {
   reactStrictMode: true,
+  output: 'standalone',
   webpack(cfg) {
     // TypeScript source files use `.js` extension imports (ESM style).
     // Webpack doesn't resolve `.js` → `.tsx/.ts` by default.

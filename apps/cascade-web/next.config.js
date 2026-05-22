@@ -10,6 +10,7 @@ const nextConfig = {
   nx: {
     svgr: false,
   },
+  output: 'standalone',
   webpack(config) {
     // When @nx/next auto-adds workspace packages to transpilePackages, the TypeScript
     // source files use `.js` extension imports (ESM style). Webpack doesn't resolve

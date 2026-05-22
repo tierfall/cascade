@@ -1,0 +1,125 @@
+name: cascade
+
+x-base-env: &base-env
+  NODE_ENV: production
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-cascade}
+      POSTGRES_USER: ${POSTGRES_USER:-cascade}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cascade}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-cascade}']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - '${REDIS_PORT:-6379}:6379'
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/cascade-api/Dockerfile
+    image: ghcr.io/tierfall/cascade-api:dev
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      <<: *base-env
+      DATABASE_URL: postgres://${POSTGRES_USER:-cascade}:${POSTGRES_PASSWORD:-cascade}@postgres:5432/${POSTGRES_DB:-cascade}?schema=public
+      REDIS_URL: redis://redis:6379
+      PORT: 3000
+      STORAGE_DRIVER: ${STORAGE_DRIVER:-local}
+      STORAGE_LOCAL_DIR: /data/storage
+    volumes:
+      - api-storage:/data/storage
+    ports:
+      - '${CASCADE_API_PORT:-3000}:3000'
+    healthcheck:
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/health']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/cascade-web/Dockerfile
+    image: ghcr.io/tierfall/cascade-web:dev
+    restart: unless-stopped
+    depends_on:
+      api: { condition: service_healthy }
+    environment:
+      <<: *base-env
+      CASCADE_API_URL: http://api:3000
+    ports:
+      - '${CASCADE_WEB_PORT:-3001}:3000'
+
+  docs:
+    build:
+      context: .
+      dockerfile: apps/cascade-docs/Dockerfile
+    image: ghcr.io/tierfall/cascade-docs:dev
+    restart: unless-stopped
+    ports:
+      - '${CASCADE_DOCS_PORT:-3002}:3001'
+
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ['demo']
+    restart: unless-stopped
+    ports:
+      - '${OLLAMA_PORT:-11434}:11434'
+    volumes:
+      - ollama-models:/root/.ollama
+    healthcheck:
+      test: ['CMD', 'ollama', 'list']
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    profiles: ['minio']
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-cascade}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-cascade}
+    ports:
+      - '${MINIO_API_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-9001}:9001'
+    volumes:
+      - minio-data:/data
+    healthcheck:
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:9000/minio/health/live']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  postgres-data:
+  redis-data:
+  api-storage:
+  ollama-models:
+  minio-data:
