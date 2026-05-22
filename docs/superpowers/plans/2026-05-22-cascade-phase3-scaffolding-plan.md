@@ -423,7 +423,7 @@ Expected: clean working tree after commit. Verify with `git log --oneline -1` sh
     "ts-node": "10.9.2",
     "tsup": "8.5.1",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.20.0"
+    "typescript-eslint": "8.59.4"
   }
 }
 ```
