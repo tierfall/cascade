@@ -1,0 +1,17 @@
+{
+  "name": "cascade-core",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/cascade-core/src",
+  "projectType": "library",
+  "tags": ["scope:platform-neutral", "type:domain"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
+    "test": { "executor": "nx:run-script", "options": { "script": "test" } },
+    "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
+    "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
+  }
+}
