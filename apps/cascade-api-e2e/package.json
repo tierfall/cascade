@@ -11,6 +11,8 @@
     "typecheck": "tsc --noEmit --pretty false"
   },
   "devDependencies": {
+    "@nestjs/common": "10.4.15",
+    "@nestjs/config": "3.3.0",
     "@nestjs/testing": "10.4.15",
     "@testcontainers/postgresql": "10.16.0",
     "@testcontainers/redis": "10.16.0",
