@@ -19,8 +19,10 @@ export default tseslint.config(
       '**/test-results/**',
       'apps/cascade-docs/.source/**',
       'apps/cascade-api/prisma/generated/**',
-      // Nx-generated webpack config uses CJS require/module — ignore for now.
+      // Nx-generated webpack/next/postcss configs use CJS require/module — ignore for now.
       'apps/cascade-api/webpack.config.js',
+      'apps/cascade-web/next.config.js',
+      'apps/cascade-web/postcss.config.js',
     ],
   },
   eslint.configs.recommended,

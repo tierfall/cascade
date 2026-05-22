@@ -1,0 +1,39 @@
+{
+  "name": "cascade-web",
+  "version": "0.0.0",
+  "description": "Next.js 15 frontend for Cascade — read-only workflow viewer in v0.1.",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "private": true,
+  "scripts": {
+    "build": "nx build cascade-web",
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --coverage",
+    "lint": "eslint --max-warnings=0 app test",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "dependencies": {
+    "@tierfall/cascade-core": "workspace:*",
+    "@tierfall/cascade-sdk": "workspace:*",
+    "@tierfall/cascade-tokens": "workspace:*",
+    "@tierfall/cascade-ui": "workspace:*",
+    "@xyflow/react": "12.4.4",
+    "next": "15.1.4",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "socket.io-client": "4.8.1",
+    "zustand": "5.0.3"
+  },
+  "devDependencies": {
+    "@jest/globals": "29.7.0",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
+    "@types/react": "19.0.7",
+    "@types/react-dom": "19.0.3",
+    "autoprefixer": "10.4.20",
+    "jest": "29.7.0",
+    "jest-environment-jsdom": "29.7.0",
+    "postcss": "8.5.1",
+    "tailwindcss": "3.4.17",
+    "ts-jest": "29.4.10",
+    "typescript": "6.0.3"
+  }
+}
