@@ -22,5 +22,5 @@
       "project": ["**/*.{ts,tsx}!"]
     }
   },
-  "ignore": ["**/dist/**", "**/.next/**", "**/.expo/**", "**/coverage/**"]
+  "ignore": ["**/dist/**", "**/.next/**", "**/.expo/**", "**/coverage/**", ".claude/**"]
 }

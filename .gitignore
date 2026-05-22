@@ -42,3 +42,6 @@ test-results/
 
 # Prisma
 apps/cascade-api/prisma/migrations/dev.db*
+
+# Harness — subagent worktrees and scratch
+.claude/

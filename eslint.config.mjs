@@ -13,6 +13,7 @@ export default tseslint.config(
       '**/.next/**',
       '**/node_modules/**',
       '**/.husky/_/**',
+      '.claude/**',
       '**/.expo/**',
       '**/playwright-report/**',
       '**/test-results/**',
