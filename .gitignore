@@ -1,0 +1,44 @@
+# Node / pnpm
+node_modules/
+.pnpm-store/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Nx
+.nx/cache
+.nx/workspace-data
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.turbo/
+.expo/
+coverage/
+
+# Env files (never commit secrets)
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# IDE / OS
+.idea/
+.vscode/*
+!.vscode/settings.json.example
+.DS_Store
+Thumbs.db
+
+# Testing
+playwright-report/
+test-results/
+.testcontainers/
+
+# Generated
+*.tsbuildinfo
+.gitnexus/cache/
+
+# Prisma
+apps/cascade-api/prisma/migrations/dev.db*

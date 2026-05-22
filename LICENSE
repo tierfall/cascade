@@ -1,0 +1,36 @@
+Sustainable Use License v1.0
+
+Copyright (c) 2026-present Cascade contributors.
+
+Portions of this software are licensed as follows:
+
+* All content that resides under the "apps/" or "packages/" directories of this
+  repository, if those directories exist, is licensed under the terms defined
+  below.
+* All third-party components incorporated into this software are licensed under
+  the original license provided by the owner of the applicable component.
+* Content outside the above-mentioned directories or restrictions above is
+  available under the "Common Clause License Condition v1.0" as described
+  below.
+
+The Sustainable Use License (the "License") permits use, copying, modification,
+and distribution of the Software, subject to the following restrictions:
+
+1. You may use, copy, modify, and distribute the Software only for your own
+   internal business purposes or for non-commercial or personal use.
+
+2. You may not alter, remove, or obscure any licensing, copyright, or other
+   notices of the licensor in the Software. Any use of the licensor's trademarks
+   is subject to applicable law.
+
+3. You may not provide the Software to third parties as a hosted or managed
+   service, where the service provides users with access to any substantial set
+   of the features or functionality of the Software.
+
+If you wish to make commercial use of the Software in violation of these
+restrictions, please contact the Cascade maintainers to discuss licensing
+options.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT.
