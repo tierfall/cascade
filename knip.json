@@ -1,0 +1,26 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "workspaces": {
+    "packages/*": {
+      "entry": ["src/index.ts!"],
+      "project": ["src/**/*.ts!", "test/**/*.ts"]
+    },
+    "apps/cascade-api": {
+      "entry": ["src/main.ts!"],
+      "project": ["src/**/*.ts!"]
+    },
+    "apps/cascade-web": {
+      "entry": ["app/**/*.tsx!", "next.config.js"],
+      "project": ["**/*.{ts,tsx}!"]
+    },
+    "apps/cascade-docs": {
+      "entry": ["app/**/*.tsx!", "source.config.ts"],
+      "project": ["**/*.{ts,tsx,mdx}!"]
+    },
+    "apps/cascade-mobile": {
+      "entry": ["App.tsx", "app.json"],
+      "project": ["**/*.{ts,tsx}!"]
+    }
+  },
+  "ignore": ["**/dist/**", "**/.next/**", "**/.expo/**", "**/coverage/**"]
+}

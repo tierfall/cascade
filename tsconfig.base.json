@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "useUnknownInCatchVariables": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": false,
+    "baseUrl": ".",
+    "paths": {
+      "@tierfall/cascade-tokens": ["packages/cascade-tokens/src/index.ts"],
+      "@tierfall/cascade-core": ["packages/cascade-core/src/index.ts"],
+      "@tierfall/cascade-sdk": ["packages/cascade-sdk/src/index.ts"],
+      "@tierfall/cascade-ui": ["packages/cascade-ui/src/index.ts"],
+      "@tierfall/cascade-nodes": ["packages/cascade-nodes/src/index.ts"],
+      "@tierfall/cascade-compiler": ["packages/cascade-compiler/src/index.ts"],
+      "@tierfall/cascade-cli": ["packages/cascade-cli/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "coverage", "**/*.test.ts", "**/*.spec.ts"]
+}

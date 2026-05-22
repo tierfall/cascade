@@ -1,0 +1,11 @@
+**/dist/**
+**/coverage/**
+**/.nx/**
+**/.next/**
+**/node_modules/**
+**/.expo/**
+**/playwright-report/**
+**/test-results/**
+pnpm-lock.yaml
+apps/cascade-api/prisma/generated/**
+apps/cascade-docs/.source/**

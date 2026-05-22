@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)",
+      "!{projectRoot}/tsconfig.spec.json",
+      "!{projectRoot}/jest.config.[jt]s"
+    ],
+    "sharedGlobals": ["{workspaceRoot}/eslint.config.mjs", "{workspaceRoot}/tsconfig.base.json"]
+  },
+  "targetDefaults": {
+    "build": { "cache": true, "inputs": ["production", "^production"], "dependsOn": ["^build"] },
+    "test": { "cache": true, "inputs": ["default", "^production"], "dependsOn": ["^build"] },
+    "lint": {
+      "cache": true,
+      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
+      "dependsOn": ["^build"]
+    },
+    "typecheck": { "cache": true, "inputs": ["default", "^production"], "dependsOn": ["^build"] },
+    "e2e": { "cache": false, "inputs": ["default", "^production"], "dependsOn": ["^build"] }
+  },
+  "defaultBase": "develop",
+  "release": {
+    "projectsRelationship": "fixed",
+    "projects": ["packages/*"],
+    "version": {
+      "preVersionCommand": "pnpm exec nx run-many -t build",
+      "conventionalCommits": true
+    },
+    "changelog": {
+      "workspaceChangelog": { "createRelease": "github" }
+    }
+  }
+}
