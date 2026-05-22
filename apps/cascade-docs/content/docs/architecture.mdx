@@ -1,0 +1,54 @@
+---
+title: Architecture
+description: A 5-minute tour of how Cascade fits together. For the canonical record, read the kickoff spec.
+---
+
+# Architecture
+
+The canonical, frozen-in-time architecture record is
+[`docs/superpowers/specs/2026-05-22-cascade-kickoff-design.md`](https://github.com/tierfall/cascade/blob/main/docs/superpowers/specs/2026-05-22-cascade-kickoff-design.md).
+This page is a 5-minute tour for newcomers.
+
+## The big picture
+
+```
+                +-----------------+        +--------+
+                |                 |        |        |
+Browser ---> | cascade-web | -----> | API | <---- CLI / Webhooks
+                | (Next 15, RF) | WS | (Nest) |
+                +-----------------+ <----- +--------+
+                                           | uses TierFall
+                                           v
+                              +-----------------------------+
+                              | @tierfall/core + adapters   |
+                              | (Ollama / OpenAI / Anthr.)  |
+                              +-----------------------------+
+```
+
+## Why the layout
+
+- **Apps own state and policy.** `cascade-api` persists everything. `cascade-web` renders
+  it. `cascade-mobile` is a v0.1 RN-boundary smoke test.
+- **Packages are platform-portable where it matters.** `cascade-tokens`, `cascade-core`,
+  `cascade-sdk` are pure TypeScript with no DOM and no Node-only imports — the same
+  module runs in Node, browsers, and React Native.
+- **TierFall is a dependency, not a fork.** When Cascade needs new routing semantics,
+  the change goes upstream into TierFall.
+- **The exit door is real.** Every workflow can be exported via `@tierfall/cascade-compiler`
+  as a `.ts` file that runs without Cascade at all.
+
+## Data flow at a high level
+
+1. A user (or webhook, or CLI) hits the API with a workflow id + input.
+2. The API enqueues the run on BullMQ (Redis-backed).
+3. A worker picks it up, walks the graph in topological order, executes each
+   node through `cascade-nodes`. LLM nodes route through `@tierfall/core`.
+4. Each node execution emits a state-change event on Redis pub/sub.
+5. The Socket.IO gateway broadcasts to every subscribed browser.
+6. The canvas updates node colors in real time (the "see what happened" promise).
+7. The run record (input + per-node outputs + tier attribution + cost) is persisted.
+
+## Self-host stance
+
+One `docker compose up` at the repo root. No external services required. Opt-in
+profiles add Ollama (for local LLMs) and MinIO (for S3-compatible storage testing).

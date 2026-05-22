@@ -49,3 +49,6 @@ apps/cascade-api/prisma/migrations/dev.db*
 # Next.js
 .next
 out
+
+# fumadocs-mdx generated source map
+.source/

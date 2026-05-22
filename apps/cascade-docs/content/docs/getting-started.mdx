@@ -1,0 +1,34 @@
+---
+title: Getting Started
+description: Stand up Cascade locally in under five minutes.
+---
+
+# Getting Started
+
+## Prerequisites
+
+- Docker (with `docker compose` v2)
+- 4GB RAM available for the stack (more if you enable the `demo` profile with Ollama)
+
+## Boot the stack
+
+```bash
+git clone https://github.com/tierfall/cascade.git
+cd cascade
+cp .env.example .env       # generate secrets via the first-boot wizard
+docker compose up -d
+```
+
+Open http://localhost:3000 — the first request lands on the setup wizard.
+The setup wizard creates the admin account and generates random secrets
+(JWT signing key, credentials-at-rest key).
+
+## Try the demo workflow
+
+```bash
+docker compose --profile demo up -d
+```
+
+This adds an Ollama container with a small local model pre-pulled. Open the
+workflow named "Demo: Ollama → OpenAI fallback" and trigger a run — you'll
+see tier attribution visible on the read-only canvas.

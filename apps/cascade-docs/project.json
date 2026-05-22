@@ -1,0 +1,9 @@
+{
+  "name": "cascade-docs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/cascade-docs",
+  "projectType": "application",
+  "tags": ["scope:docs", "type:app"],
+  "// targets": "to see all targets run: nx show project cascade-docs --web",
+  "targets": {}
+}
