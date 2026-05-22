@@ -16,6 +16,7 @@ target-commits: 19
 **Architecture:** pnpm + Nx monorepo mirroring the TierFall sibling repo's conventions. Three platform-neutral packages (`cascade-tokens`, `cascade-core`, `cascade-sdk`) enforce a React-Native-ready boundary via ESLint + a CI build job. Apps consume packages via Nx project references. Docker compose uses Compose profiles (single file) for the `--profile demo` (Ollama) and `--profile minio` (S3-compatible) opt-ins. Coverage gates wired via Codecov per per-package thresholds from spec §4.5.
 
 **Tech Stack:**
+
 - pnpm 10.x, Node 24, Nx (latest stable), TypeScript 6.x
 - jest 29.7.0 + ts-jest 29.4.10 (Jest 30 explicitly forbidden by spec)
 - ESLint 9 flat config + `typescript-eslint` strict-type-checked + Prettier
@@ -78,20 +79,20 @@ cascade/
 
 Each ADR lives at `docs/adrs/NNNN-slug.md`. ADRs are created in **Task 19**. The roster:
 
-| # | Slug | Topic | Spec ref |
-|---|---|---|---|
-| 0001 | `mirror-tierfall-toolchain` | pnpm 10.x, Node 24, DCO, Nx | §2 |
-| 0002 | `compose-profiles-not-overlays` | Modular via Compose profiles | §5.1 |
-| 0003 | `prisma-as-orm` | Prisma over TypeORM/Drizzle | §4.2 |
-| 0004 | `zustand-for-canvas-state` | Zustand for ReactFlow | §6.1 |
-| 0005 | `n8n-sustainable-use-license` | Fair-code over Apache/MIT | §10.1 |
-| 0006 | `cascade-tokens-as-ssot` | Tokens as SSOT, web + mobile both consume | §7 |
-| 0007 | `codecov-for-coverage` | Codecov over jest-coverage-report-action | §4.3 |
-| 0008 | `fast-check-from-v01-stryker-deferred` | Property tests now, mutation tests later | §4.4 |
-| 0009 | `docs-bundled-in-compose` | Docs in Docker, Vercel later | §5.2 |
-| 0010 | `pluggable-storage-provider` | Local FS default, S3 env-switched | §5.3 |
-| 0011 | `synchronized-versioning-via-nx` | Fixed mode in Nx/Changesets | §10.2 |
-| 0012 | `single-admin-auth-in-v01` | First-to-/setup becomes admin | §5.5 |
+| #    | Slug                                   | Topic                                     | Spec ref |
+| ---- | -------------------------------------- | ----------------------------------------- | -------- |
+| 0001 | `mirror-tierfall-toolchain`            | pnpm 10.x, Node 24, DCO, Nx               | §2       |
+| 0002 | `compose-profiles-not-overlays`        | Modular via Compose profiles              | §5.1     |
+| 0003 | `prisma-as-orm`                        | Prisma over TypeORM/Drizzle               | §4.2     |
+| 0004 | `zustand-for-canvas-state`             | Zustand for ReactFlow                     | §6.1     |
+| 0005 | `n8n-sustainable-use-license`          | Fair-code over Apache/MIT                 | §10.1    |
+| 0006 | `cascade-tokens-as-ssot`               | Tokens as SSOT, web + mobile both consume | §7       |
+| 0007 | `codecov-for-coverage`                 | Codecov over jest-coverage-report-action  | §4.3     |
+| 0008 | `fast-check-from-v01-stryker-deferred` | Property tests now, mutation tests later  | §4.4     |
+| 0009 | `docs-bundled-in-compose`              | Docs in Docker, Vercel later              | §5.2     |
+| 0010 | `pluggable-storage-provider`           | Local FS default, S3 env-switched         | §5.3     |
+| 0011 | `synchronized-versioning-via-nx`       | Fixed mode in Nx/Changesets               | §10.2    |
+| 0012 | `single-admin-auth-in-v01`             | First-to-/setup becomes admin             | §5.5     |
 
 ADR template (used for all twelve in Task 19):
 
@@ -102,15 +103,19 @@ ADR template (used for all twelve in Task 19):
 **Spec reference:** `docs/superpowers/specs/2026-05-22-cascade-kickoff-design.md` §<section>
 
 ## Context
+
 <one paragraph framing the decision>
 
 ## Decision
+
 <the chosen option, plainly stated>
 
 ## Consequences
+
 <positive and negative consequences, including any deferred work>
 
 ## Alternatives considered
+
 <options rejected, with one-line reasoning each>
 ```
 
@@ -128,27 +133,27 @@ ADR template (used for all twelve in Task 19):
 
 ## Tasks at a glance (19 total)
 
-| # | Conventional commit | What it produces |
-|---|---|---|
-| 1 | `chore: initialize repo with license, code of conduct, and base configuration` | git init, LICENSE (SUL), CoC, .gitignore, .editorconfig, .nvmrc, .npmrc, SECURITY.md |
-| 2 | `chore: add pnpm workspace, Nx, TypeScript, ESLint, Prettier, commitlint` | Workspace files + root configs |
-| 3 | `chore: add Husky pre-commit hooks and DCO sign-off` | Husky hooks, lint-staged |
-| 4 | `feat(tokens): scaffold cascade-tokens package` | Pure-TS tokens + 100% threshold |
-| 5 | `feat(core): scaffold cascade-core with Zod schemas and fast-check` | Workflow schemas, graph utils, property tests |
-| 6 | `feat(sdk): scaffold cascade-sdk fetch-based client` | Typed API client |
-| 7 | `chore(eslint): enforce platform-neutral boundary on tokens, core, sdk` | no-restricted-imports rule + RN-target CI build |
-| 8 | `feat(ui): scaffold cascade-ui with Tailwind preset and Radix primitives` | Button + TierBadge + preset |
-| 9 | `feat(nodes): scaffold cascade-nodes registry` | LLM/Conditional/Transform/HTTP stubs |
-| 10 | `feat(compiler): scaffold cascade-compiler skeleton` | Graph → .ts emitter (no-op for v0.1) |
-| 11 | `feat(cli): scaffold cascade-cli with cascade run command` | Bin entry, oclif-light setup |
-| 12 | `feat(api): scaffold cascade-api NestJS app with Prisma` | NestJS + Prisma + health endpoint |
-| 13 | `feat(web): scaffold cascade-web Next.js app consuming cascade-ui` | Next 15 app + theme |
-| 14 | `feat(docs): scaffold cascade-docs Fumadocs site` | Docs site with one page |
-| 15 | `feat(mobile): scaffold cascade-mobile Expo skeleton with tokens smoke test` | One screen, RN-boundary smoke test |
-| 16 | `test(e2e): scaffold cascade-api-e2e (Testcontainers) and cascade-web-e2e (Playwright)` | One integration test, one Playwright test |
-| 17 | `chore(docker): add docker-compose.yml with profiles and per-app Dockerfiles` | Compose + multi-stage Dockerfiles |
-| 18 | `chore(ci): add GitHub Actions workflows for lint, test, e2e, build, coverage` | 4 workflow files + codecov.yml |
-| 19 | `docs: add README, CONTRIBUTING, testing.md, n8n-parity.md, ADRs, PR template, root CLAUDE.md, AGENTS.md` | All docs + gitnexus initial index + push develop |
+| #   | Conventional commit                                                                                       | What it produces                                                                     |
+| --- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| 1   | `chore: initialize repo with license, code of conduct, and base configuration`                            | git init, LICENSE (SUL), CoC, .gitignore, .editorconfig, .nvmrc, .npmrc, SECURITY.md |
+| 2   | `chore: add pnpm workspace, Nx, TypeScript, ESLint, Prettier, commitlint`                                 | Workspace files + root configs                                                       |
+| 3   | `chore: add Husky pre-commit hooks and DCO sign-off`                                                      | Husky hooks, lint-staged                                                             |
+| 4   | `feat(tokens): scaffold cascade-tokens package`                                                           | Pure-TS tokens + 100% threshold                                                      |
+| 5   | `feat(core): scaffold cascade-core with Zod schemas and fast-check`                                       | Workflow schemas, graph utils, property tests                                        |
+| 6   | `feat(sdk): scaffold cascade-sdk fetch-based client`                                                      | Typed API client                                                                     |
+| 7   | `chore(eslint): enforce platform-neutral boundary on tokens, core, sdk`                                   | no-restricted-imports rule + RN-target CI build                                      |
+| 8   | `feat(ui): scaffold cascade-ui with Tailwind preset and Radix primitives`                                 | Button + TierBadge + preset                                                          |
+| 9   | `feat(nodes): scaffold cascade-nodes registry`                                                            | LLM/Conditional/Transform/HTTP stubs                                                 |
+| 10  | `feat(compiler): scaffold cascade-compiler skeleton`                                                      | Graph → .ts emitter (no-op for v0.1)                                                 |
+| 11  | `feat(cli): scaffold cascade-cli with cascade run command`                                                | Bin entry, oclif-light setup                                                         |
+| 12  | `feat(api): scaffold cascade-api NestJS app with Prisma`                                                  | NestJS + Prisma + health endpoint                                                    |
+| 13  | `feat(web): scaffold cascade-web Next.js app consuming cascade-ui`                                        | Next 15 app + theme                                                                  |
+| 14  | `feat(docs): scaffold cascade-docs Fumadocs site`                                                         | Docs site with one page                                                              |
+| 15  | `feat(mobile): scaffold cascade-mobile Expo skeleton with tokens smoke test`                              | One screen, RN-boundary smoke test                                                   |
+| 16  | `test(e2e): scaffold cascade-api-e2e (Testcontainers) and cascade-web-e2e (Playwright)`                   | One integration test, one Playwright test                                            |
+| 17  | `chore(docker): add docker-compose.yml with profiles and per-app Dockerfiles`                             | Compose + multi-stage Dockerfiles                                                    |
+| 18  | `chore(ci): add GitHub Actions workflows for lint, test, e2e, build, coverage`                            | 4 workflow files + codecov.yml                                                       |
+| 19  | `docs: add README, CONTRIBUTING, testing.md, n8n-parity.md, ADRs, PR template, root CLAUDE.md, AGENTS.md` | All docs + gitnexus initial index + push develop                                     |
 
 ---
 
@@ -157,6 +162,7 @@ ADR template (used for all twelve in Task 19):
 ## Task 1: Initialize repo with license, CoC, and base configuration
 
 **Files:**
+
 - Create: `.gitignore`, `.gitattributes`, `.editorconfig`, `.nvmrc`, `.npmrc`, `LICENSE`, `CODE_OF_CONDUCT.md`, `SECURITY.md`
 - The existing `docs/superpowers/specs/2026-05-22-cascade-kickoff-design.md` and `docs/superpowers/plans/2026-05-22-cascade-phase3-scaffolding-plan.md` are picked up in this first commit.
 
@@ -324,11 +330,13 @@ notes (unless they request anonymity).
 ## Scope
 
 In scope:
+
 - The Cascade application and its packages published to npm under `@tierfall/cascade-*`.
 - The Docker images published to `ghcr.io/tierfall/cascade-*`.
 - The default docker-compose stack and its security defaults (constraint #23 of the spec).
 
 Out of scope:
+
 - Third-party dependencies — please report those upstream and notify us if it affects Cascade.
 - Self-hosted misconfigurations that contradict the documented defaults.
 
@@ -363,6 +371,7 @@ Expected: clean working tree after commit. Verify with `git log --oneline -1` sh
 ## Task 2: Add pnpm workspace, Nx, TypeScript, ESLint, Prettier, commitlint
 
 **Files:**
+
 - Create: `package.json` (root), `pnpm-workspace.yaml`, `nx.json`, `tsconfig.base.json`, `eslint.config.mjs`, `.prettierrc.mjs`, `.prettierignore`, `commitlint.config.mjs`, `knip.json`
 
 - [ ] **Step 1: Write root `package.json`** (mirrors TierFall layout; scripts use `nx run-many`)
@@ -627,7 +636,19 @@ export default {
     'type-enum': [
       2,
       'always',
-      ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'build', 'ci', 'chore', 'revert'],
+      [
+        'feat',
+        'fix',
+        'docs',
+        'style',
+        'refactor',
+        'perf',
+        'test',
+        'build',
+        'ci',
+        'chore',
+        'revert',
+      ],
     ],
     'scope-empty': [0],
     'subject-case': [2, 'never', ['upper-case', 'pascal-case', 'start-case']],
@@ -709,6 +730,7 @@ chore: add pnpm workspace, Nx, TypeScript, ESLint, Prettier, commitlint
 ## Task 3: Add Husky pre-commit hooks and DCO sign-off
 
 **Files:**
+
 - Create: `.husky/pre-commit`, `.husky/commit-msg`, `.husky/prepare-commit-msg`, `.lintstagedrc.mjs`
 
 - [ ] **Step 1: Initialize Husky**
@@ -727,7 +749,7 @@ This creates `.husky/pre-commit` with a placeholder. Overwrite in the next step.
 . "$(dirname -- "$0")/_/husky.sh"
 
 pnpm exec lint-staged
-pnpm exec tsc --noEmit
+pnpm typecheck
 pnpm exec nx affected -t test --base=HEAD~1 --head=HEAD --parallel=3 || pnpm exec nx run-many -t test --parallel=3
 ```
 
@@ -798,7 +820,7 @@ git add .husky/pre-commit .husky/commit-msg .husky/prepare-commit-msg .lintstage
 git commit -m "$(cat <<'EOF'
 chore: add Husky pre-commit hooks and DCO sign-off
 
-- pre-commit: lint-staged → tsc --noEmit → affected tests
+- pre-commit: lint-staged → pnpm typecheck → affected tests
 - commit-msg: commitlint --edit
 - prepare-commit-msg: auto-append Signed-off-by trailer so a forgotten `-s`
   doesn't block contributors (DCO is still required, just opt-in via config)
@@ -816,6 +838,7 @@ Note: the `prepare-commit-msg` hook adds `Signed-off-by` automatically, so omit 
 ## Task 4: Scaffold `cascade-tokens` package
 
 **Files:**
+
 - Create: `packages/cascade-tokens/package.json`, `tsconfig.json`, `project.json`, `jest.config.ts`, `tsup.config.ts`, `CLAUDE.md`
 - Create: `packages/cascade-tokens/src/{index,colors,spacing,typography,radii,motion}.ts`
 - Create: `packages/cascade-tokens/test/tokens.test.ts`
@@ -884,7 +907,11 @@ mkdir -p packages/cascade-tokens/src packages/cascade-tokens/test
   "projectType": "library",
   "tags": ["scope:platform-neutral", "type:tokens"],
   "targets": {
-    "build": { "executor": "nx:run-script", "options": { "script": "build" }, "outputs": ["{projectRoot}/dist"] },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
     "test": { "executor": "nx:run-script", "options": { "script": "test" } },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
@@ -1205,6 +1232,7 @@ EOF
 ## Task 5: Scaffold `cascade-core` with Zod schemas and fast-check property tests
 
 **Files:**
+
 - Create: `packages/cascade-core/{package.json,tsconfig.json,project.json,jest.config.ts,tsup.config.ts,CLAUDE.md}`
 - Create: `packages/cascade-core/src/{index,workflow-schema,graph,tier-policy,errors}.ts`
 - Create: `packages/cascade-core/test/{workflow-schema,graph,tier-policy}.test.ts`
@@ -1279,7 +1307,11 @@ mkdir -p packages/cascade-core/src packages/cascade-core/test
   "projectType": "library",
   "tags": ["scope:platform-neutral", "type:domain"],
   "targets": {
-    "build": { "executor": "nx:run-script", "options": { "script": "build" }, "outputs": ["{projectRoot}/dist"] },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
     "test": { "executor": "nx:run-script", "options": { "script": "test" } },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
@@ -1433,9 +1465,7 @@ describe('hasCycle', () => {
   });
 
   it('detects a direct self-loop', () => {
-    expect(
-      hasCycle({ nodes: [{ id: 'a' }], edges: [{ from: 'a', to: 'a' }] }),
-    ).toBe(true);
+    expect(hasCycle({ nodes: [{ id: 'a' }], edges: [{ from: 'a', to: 'a' }] })).toBe(true);
   });
 
   it('detects a back-edge cycle of length 3', () => {
@@ -1536,13 +1566,23 @@ describe('TierPolicySchema', () => {
 
   it('rejects negative maxCostUsd', () => {
     expect(
-      TierPolicySchema.safeParse({ preferLocal: true, maxCostUsd: -1, allowedTiers: [0], fallbackOnError: false }).success,
+      TierPolicySchema.safeParse({
+        preferLocal: true,
+        maxCostUsd: -1,
+        allowedTiers: [0],
+        fallbackOnError: false,
+      }).success,
     ).toBe(false);
   });
 
   it('rejects an empty allowedTiers list', () => {
     expect(
-      TierPolicySchema.safeParse({ preferLocal: true, maxCostUsd: 1, allowedTiers: [], fallbackOnError: false }).success,
+      TierPolicySchema.safeParse({
+        preferLocal: true,
+        maxCostUsd: 1,
+        allowedTiers: [],
+        fallbackOnError: false,
+      }).success,
     ).toBe(false);
   });
 });
@@ -1582,7 +1622,10 @@ Expected: cannot resolve `../src/*.js` imports.
 
 ```typescript
 export class WorkflowValidationError extends Error {
-  constructor(message: string, public readonly issues: readonly string[] = []) {
+  constructor(
+    message: string,
+    public readonly issues: readonly string[] = [],
+  ) {
     super(message);
     this.name = 'WorkflowValidationError';
   }
@@ -1653,8 +1696,13 @@ export const NODE_TYPE_LIST = NODE_TYPES;
 ```typescript
 import { CycleDetectedError } from './errors.js';
 
-interface MinimalNode { id: string }
-interface MinimalEdge { from: string; to: string }
+interface MinimalNode {
+  id: string;
+}
+interface MinimalEdge {
+  from: string;
+  to: string;
+}
 export interface Graph {
   nodes: readonly MinimalNode[];
   edges: readonly MinimalEdge[];
@@ -1702,7 +1750,9 @@ export function topologicalSort(graph: Graph): string[] {
   graph.edges.forEach((e) => indeg.set(e.to, (indeg.get(e.to) ?? 0) + 1));
 
   const queue: string[] = [];
-  indeg.forEach((d, id) => { if (d === 0) queue.push(id); });
+  indeg.forEach((d, id) => {
+    if (d === 0) queue.push(id);
+  });
   const sorted: string[] = [];
   while (queue.length > 0) {
     const id = queue.shift();
@@ -1850,6 +1900,7 @@ EOF
 ## Task 6: Scaffold `cascade-sdk` fetch-based client
 
 **Files:**
+
 - Create: `packages/cascade-sdk/{package.json,tsconfig.json,project.json,jest.config.ts,tsup.config.ts,CLAUDE.md}`
 - Create: `packages/cascade-sdk/src/{index,client,errors,types}.ts`
 - Create: `packages/cascade-sdk/test/client.test.ts`
@@ -1919,7 +1970,11 @@ mkdir -p packages/cascade-sdk/src packages/cascade-sdk/test
   "projectType": "library",
   "tags": ["scope:platform-neutral", "type:client"],
   "targets": {
-    "build": { "executor": "nx:run-script", "options": { "script": "build" }, "outputs": ["{projectRoot}/dist"] },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
     "test": { "executor": "nx:run-script", "options": { "script": "test" } },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
@@ -1985,7 +2040,10 @@ describe('CascadeClient', () => {
 
   it('issues a GET to /health on healthcheck()', async () => {
     fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ status: 'ok' }), { status: 200, headers: { 'content-type': 'application/json' } }),
+      new Response(JSON.stringify({ status: 'ok' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
     );
     const client = new CascadeClient({ baseUrl: 'http://api.test' });
     const result = await client.health();
@@ -2005,7 +2063,9 @@ describe('CascadeClient', () => {
   });
 
   it('attaches the Authorization header when an api token is configured', async () => {
-    fetchMock.mockResolvedValueOnce(new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }));
+    fetchMock.mockResolvedValueOnce(
+      new Response('{}', { status: 200, headers: { 'content-type': 'application/json' } }),
+    );
     const client = new CascadeClient({ baseUrl: 'http://api.test', apiToken: 't0ken' });
     await client.health();
     expect(fetchMock).toHaveBeenCalledWith(
@@ -2026,7 +2086,10 @@ describe('CascadeClient', () => {
     const client = new CascadeClient({ baseUrl: 'http://api.test' });
     const wfs = await client.listWorkflows();
     expect(wfs).toEqual([{ id: 'wf_1', name: 'Demo' }]);
-    expect(fetchMock).toHaveBeenCalledWith('http://api.test/workflows', expect.objectContaining({ method: 'GET' }));
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://api.test/workflows',
+      expect.objectContaining({ method: 'GET' }),
+    );
   });
 
   it('triggerWorkflow() POSTs JSON to /workflows/:id/runs', async () => {
@@ -2050,7 +2113,9 @@ describe('CascadeClient', () => {
   });
 
   it('rejects with CascadeApiError when content-type is not JSON', async () => {
-    fetchMock.mockResolvedValueOnce(new Response('not json', { status: 200, headers: { 'content-type': 'text/plain' } }));
+    fetchMock.mockResolvedValueOnce(
+      new Response('not json', { status: 200, headers: { 'content-type': 'text/plain' } }),
+    );
     const client = new CascadeClient({ baseUrl: 'http://api.test' });
     await expect(client.health()).rejects.toBeInstanceOf(CascadeApiError);
   });
@@ -2069,7 +2134,11 @@ Expected: import resolution failure.
 
 ```typescript
 export class CascadeApiError extends Error {
-  constructor(message: string, public readonly status: number, public readonly body?: unknown) {
+  constructor(
+    message: string,
+    public readonly status: number,
+    public readonly body?: unknown,
+  ) {
     super(message);
     this.name = 'CascadeApiError';
   }
@@ -2235,6 +2304,7 @@ EOF
 ## Task 7: Enforce platform-neutral boundary in ESLint + CI
 
 **Files:**
+
 - Modify: `eslint.config.mjs` (add `no-restricted-imports` rule scoped via overrides)
 - Create: `tools/rn-target-tsconfig.json` (minimal RN-compatible tsconfig used by the CI smoke job)
 - Create: `tools/check-platform-neutral.mjs` (Node script invoked from CI)
@@ -2421,6 +2491,7 @@ EOF
 ## Task 8: Scaffold `cascade-ui` with Tailwind preset and Radix primitives
 
 **Files:**
+
 - Create: `packages/cascade-ui/{package.json,tsconfig.json,project.json,jest.config.ts,tsup.config.ts,tailwind-preset.ts,CLAUDE.md}`
 - Create: `packages/cascade-ui/src/{index.ts,utils.ts,Button.tsx,TierBadge.tsx}`
 - Create: `packages/cascade-ui/test/{Button.test.tsx,TierBadge.test.tsx,preset.test.ts}`
@@ -2452,7 +2523,10 @@ mkdir -p packages/cascade-ui/src packages/cascade-ui/test
     },
     "./tailwind-preset": {
       "import": { "types": "./dist/tailwind-preset.d.ts", "default": "./dist/tailwind-preset.js" },
-      "require": { "types": "./dist/tailwind-preset.d.cts", "default": "./dist/tailwind-preset.cjs" }
+      "require": {
+        "types": "./dist/tailwind-preset.d.cts",
+        "default": "./dist/tailwind-preset.cjs"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -2517,7 +2591,11 @@ mkdir -p packages/cascade-ui/src packages/cascade-ui/test
   "projectType": "library",
   "tags": ["scope:web", "type:design-system"],
   "targets": {
-    "build": { "executor": "nx:run-script", "options": { "script": "build" }, "outputs": ["{projectRoot}/dist"] },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
     "test": { "executor": "nx:run-script", "options": { "script": "test" } },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
@@ -2553,7 +2631,13 @@ const config: Config = {
   rootDir: '.',
   roots: ['<rootDir>/src', '<rootDir>/test'],
   testMatch: ['**/*.test.ts', '**/*.test.tsx'],
-  collectCoverageFrom: ['src/**/*.ts', 'src/**/*.tsx', 'tailwind-preset.ts', '!src/**/*.d.ts', '!src/index.ts'],
+  collectCoverageFrom: [
+    'src/**/*.ts',
+    'src/**/*.tsx',
+    'tailwind-preset.ts',
+    '!src/**/*.d.ts',
+    '!src/index.ts',
+  ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'json-summary'],
   coverageThreshold: {
@@ -2821,7 +2905,10 @@ const preset: Config = {
     extend: {
       colors: {
         ...tierColors,
-        background: { light: colors.neutral.background.light, dark: colors.neutral.background.dark },
+        background: {
+          light: colors.neutral.background.light,
+          dark: colors.neutral.background.dark,
+        },
         foreground: colors.neutral.foreground.light,
         'neutral-border': colors.neutral.border.light,
         'neutral-muted': colors.neutral.muted.light,
@@ -2939,6 +3026,7 @@ EOF
 ## Task 9: Scaffold `cascade-nodes` registry
 
 **Files:**
+
 - Create: `packages/cascade-nodes/{package.json,tsconfig.json,project.json,jest.config.ts,tsup.config.ts,CLAUDE.md}`
 - Create: `packages/cascade-nodes/src/{index.ts,registry.ts,types.ts}`
 - Create: `packages/cascade-nodes/src/node-types/{llm,conditional,transform,http}.ts`
@@ -3010,7 +3098,11 @@ mkdir -p packages/cascade-nodes/src/node-types packages/cascade-nodes/test
   "projectType": "library",
   "tags": ["scope:server", "type:domain"],
   "targets": {
-    "build": { "executor": "nx:run-script", "options": { "script": "build" }, "outputs": ["{projectRoot}/dist"] },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
     "test": { "executor": "nx:run-script", "options": { "script": "test" } },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
@@ -3097,7 +3189,9 @@ import { llmHandler } from '../src/node-types/llm.js';
 
 describe('llmHandler', () => {
   it('validateConfig accepts a minimal valid config', () => {
-    expect(llmHandler.validateConfig({ prompt: 'hi', policyOverride: undefined }).success).toBe(true);
+    expect(llmHandler.validateConfig({ prompt: 'hi', policyOverride: undefined }).success).toBe(
+      true,
+    );
   });
 
   it('validateConfig rejects a missing prompt', () => {
@@ -3190,7 +3284,10 @@ describe('httpHandler', () => {
 
   it('execute issues a request to the configured url and returns the body', async () => {
     fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ ok: true }), { status: 200, headers: { 'content-type': 'application/json' } }),
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
     );
     const result = await httpHandler.execute(
       { url: 'http://example.com', method: 'GET' },
@@ -3201,7 +3298,9 @@ describe('httpHandler', () => {
   });
 
   it('execute returns the failing status without throwing on 4xx/5xx (caller decides)', async () => {
-    fetchMock.mockResolvedValueOnce(new Response('boom', { status: 500, headers: { 'content-type': 'text/plain' } }));
+    fetchMock.mockResolvedValueOnce(
+      new Response('boom', { status: 500, headers: { 'content-type': 'text/plain' } }),
+    );
     const result = await httpHandler.execute(
       { url: 'http://example.com', method: 'GET' },
       { runId: 'r', nodeId: 'n' },
@@ -3235,7 +3334,9 @@ export type NodeResult =
   | { kind: 'stub'; output: string };
 
 export interface NodeHandler<C = Record<string, unknown>> {
-  validateConfig(config: unknown): { success: true; data: C } | { success: false; error: z.ZodError };
+  validateConfig(
+    config: unknown,
+  ): { success: true; data: C } | { success: false; error: z.ZodError };
   execute(config: C, ctx: ExecutionContext): Promise<NodeResult>;
 }
 ```
@@ -3256,7 +3357,9 @@ const ConfigSchema = z.object({
 export const llmHandler: NodeHandler<z.infer<typeof ConfigSchema>> = {
   validateConfig: (config) => {
     const parsed = ConfigSchema.safeParse(config);
-    return parsed.success ? { success: true, data: parsed.data } : { success: false, error: parsed.error };
+    return parsed.success
+      ? { success: true, data: parsed.data }
+      : { success: false, error: parsed.error };
   },
   execute: async (_config, _ctx) =>
     Promise.resolve({ kind: 'stub', output: '[llm stub — wired to TierFall in v0.1 backlog]' }),
@@ -3274,7 +3377,9 @@ const ConfigSchema = z.object({ expression: z.string().min(1) });
 export const conditionalHandler: NodeHandler<z.infer<typeof ConfigSchema>> = {
   validateConfig: (config) => {
     const parsed = ConfigSchema.safeParse(config);
-    return parsed.success ? { success: true, data: parsed.data } : { success: false, error: parsed.error };
+    return parsed.success
+      ? { success: true, data: parsed.data }
+      : { success: false, error: parsed.error };
   },
   execute: async (config, ctx) => {
     const input = ctx.input ?? {};
@@ -3294,13 +3399,20 @@ function evaluateSimple(expr: string, input: Record<string, unknown>): boolean {
   if (typeof lhsRaw !== 'number') return false;
   const rhs = Number(rhsStr);
   switch (op) {
-    case '>': return lhsRaw > rhs;
-    case '<': return lhsRaw < rhs;
-    case '>=': return lhsRaw >= rhs;
-    case '<=': return lhsRaw <= rhs;
-    case '===': return lhsRaw === rhs;
-    case '!==': return lhsRaw !== rhs;
-    default: return false;
+    case '>':
+      return lhsRaw > rhs;
+    case '<':
+      return lhsRaw < rhs;
+    case '>=':
+      return lhsRaw >= rhs;
+    case '<=':
+      return lhsRaw <= rhs;
+    case '===':
+      return lhsRaw === rhs;
+    case '!==':
+      return lhsRaw !== rhs;
+    default:
+      return false;
   }
 }
 ```
@@ -3316,7 +3428,9 @@ const ConfigSchema = z.object({ expression: z.string().min(1) });
 export const transformHandler: NodeHandler<z.infer<typeof ConfigSchema>> = {
   validateConfig: (config) => {
     const parsed = ConfigSchema.safeParse(config);
-    return parsed.success ? { success: true, data: parsed.data } : { success: false, error: parsed.error };
+    return parsed.success
+      ? { success: true, data: parsed.data }
+      : { success: false, error: parsed.error };
   },
   execute: async (_config, ctx) =>
     // v0.1 stub: passthrough. jsonata wiring is a backlog issue.
@@ -3340,7 +3454,9 @@ const ConfigSchema = z.object({
 export const httpHandler: NodeHandler<z.infer<typeof ConfigSchema>> = {
   validateConfig: (config) => {
     const parsed = ConfigSchema.safeParse(config);
-    return parsed.success ? { success: true, data: parsed.data } : { success: false, error: parsed.error };
+    return parsed.success
+      ? { success: true, data: parsed.data }
+      : { success: false, error: parsed.error };
   },
   execute: async (config, _ctx) => {
     const init: RequestInit = { method: config.method };
@@ -3434,6 +3550,7 @@ EOF
 ## Task 10: Scaffold `cascade-compiler` skeleton
 
 **Files:**
+
 - Create: `packages/cascade-compiler/{package.json,tsconfig.json,project.json,jest.config.ts,tsup.config.ts,CLAUDE.md}`
 - Create: `packages/cascade-compiler/src/{index.ts,compile.ts,emit.ts}`
 - Create: `packages/cascade-compiler/test/{compile.test.ts,emit.test.ts}`
@@ -3502,7 +3619,11 @@ mkdir -p packages/cascade-compiler/src packages/cascade-compiler/test
   "projectType": "library",
   "tags": ["scope:server", "type:tooling"],
   "targets": {
-    "build": { "executor": "nx:run-script", "options": { "script": "build" }, "outputs": ["{projectRoot}/dist"] },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
     "test": { "executor": "nx:run-script", "options": { "script": "test" } },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
@@ -3615,9 +3736,10 @@ export interface EmitOptions {
 }
 
 export function emit(workflow: Workflow, opts: EmitOptions = {}): string {
-  const baseUrl = opts.apiBaseUrl !== undefined
-    ? JSON.stringify(opts.apiBaseUrl)
-    : "process.env.CASCADE_API_URL ?? 'http://localhost:3000'";
+  const baseUrl =
+    opts.apiBaseUrl !== undefined
+      ? JSON.stringify(opts.apiBaseUrl)
+      : "process.env.CASCADE_API_URL ?? 'http://localhost:3000'";
 
   return `// Generated by @tierfall/cascade-compiler — DO NOT EDIT BY HAND.
 // Workflow: ${workflow.name} (${workflow.id})
@@ -3715,6 +3837,7 @@ EOF
 ## Task 11: Scaffold `cascade-cli` with the `cascade run` command
 
 **Files:**
+
 - Create: `packages/cascade-cli/{package.json,tsconfig.json,project.json,jest.config.ts,tsup.config.ts,CLAUDE.md}`
 - Create: `packages/cascade-cli/src/{index.ts,bin.ts,run.ts,parse-args.ts}`
 - Create: `packages/cascade-cli/test/{run.test.ts,parse-args.test.ts}`
@@ -3786,7 +3909,11 @@ mkdir -p packages/cascade-cli/src packages/cascade-cli/test
   "projectType": "library",
   "tags": ["scope:server", "type:cli"],
   "targets": {
-    "build": { "executor": "nx:run-script", "options": { "script": "build" }, "outputs": ["{projectRoot}/dist"] },
+    "build": {
+      "executor": "nx:run-script",
+      "options": { "script": "build" },
+      "outputs": ["{projectRoot}/dist"]
+    },
     "test": { "executor": "nx:run-script", "options": { "script": "test" } },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
@@ -3919,15 +4046,25 @@ describe('runCommand', () => {
         headers: { 'content-type': 'application/json' },
       }),
     );
-    await runCommand({ workflowId: 'wf_1', apiUrl: 'http://api.test', apiToken: 't0k', wait: false }, () => undefined);
+    await runCommand(
+      { workflowId: 'wf_1', apiUrl: 'http://api.test', apiToken: 't0k', wait: false },
+      () => undefined,
+    );
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
-      expect.objectContaining({ headers: expect.objectContaining({ Authorization: 'Bearer t0k' }) }),
+      expect.objectContaining({
+        headers: expect.objectContaining({ Authorization: 'Bearer t0k' }),
+      }),
     );
   });
 
   it('throws on API error', async () => {
-    fetchMock.mockResolvedValueOnce(new Response('{"error":"x"}', { status: 500, headers: { 'content-type': 'application/json' } }));
+    fetchMock.mockResolvedValueOnce(
+      new Response('{"error":"x"}', {
+        status: 500,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
     await expect(
       runCommand({ workflowId: 'wf_1', apiUrl: 'http://api.test', wait: false }, () => undefined),
     ).rejects.toThrow();
@@ -4008,7 +4145,10 @@ export async function runCommand(opts: RunOptions, log: Logger): Promise<void> {
     baseUrl: opts.apiUrl,
     ...(opts.apiToken !== undefined ? { apiToken: opts.apiToken } : {}),
   });
-  const run = await client.triggerWorkflow(opts.workflowId, opts.input !== undefined ? { input: opts.input } : {});
+  const run = await client.triggerWorkflow(
+    opts.workflowId,
+    opts.input !== undefined ? { input: opts.input } : {},
+  );
   log(`Triggered ${opts.workflowId} -> run id ${run.id} (status: ${run.status})`);
   if (opts.wait) {
     log('Note: --wait polling is a backlog issue (B-CLI-WAIT) — exiting without blocking.');
@@ -4133,6 +4273,7 @@ EOF
 ## Task 12: Scaffold `cascade-api` NestJS app with Prisma
 
 **Files:**
+
 - Generate via Nx, then customize:
   - `apps/cascade-api/{package.json,tsconfig.app.json,tsconfig.spec.json,project.json,jest.config.ts,webpack.config.js}`
   - `apps/cascade-api/src/{main.ts,app.module.ts}`
@@ -4430,9 +4571,7 @@ describe('HealthController', () => {
     queryRawMock.mockReset();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [HealthController],
-      providers: [
-        { provide: PrismaService, useValue: { $queryRaw: queryRawMock } },
-      ],
+      providers: [{ provide: PrismaService, useValue: { $queryRaw: queryRawMock } }],
     }).compile();
     controller = module.get(HealthController);
   });
@@ -4562,6 +4701,7 @@ EOF
 ## Task 13: Scaffold `cascade-web` Next.js app consuming cascade-ui
 
 **Files:**
+
 - Generate via Nx, then customize:
   - `apps/cascade-web/{package.json,tsconfig.json,project.json,next.config.js}`
   - `apps/cascade-web/{app/layout.tsx,app/page.tsx,app/globals.css}`
@@ -4627,10 +4767,7 @@ import type { Config } from 'tailwindcss';
 
 const config: Config = {
   presets: [preset],
-  content: [
-    './app/**/*.{ts,tsx}',
-    '../../packages/cascade-ui/src/**/*.{ts,tsx}',
-  ],
+  content: ['./app/**/*.{ts,tsx}', '../../packages/cascade-ui/src/**/*.{ts,tsx}'],
 };
 
 export default config;
@@ -4849,6 +4986,7 @@ EOF
 ## Task 14: Scaffold `cascade-docs` Fumadocs site
 
 **Files:**
+
 - Generate via Nx + manual Fumadocs scaffold:
   - `apps/cascade-docs/{package.json,next.config.mjs,source.config.ts,tsconfig.json}`
   - `apps/cascade-docs/app/{layout.tsx,page.tsx}`
@@ -5049,7 +5187,7 @@ Tier routing is on the canvas, not in a settings panel.
 
 - [ ] **Step 7: Write `apps/cascade-docs/content/docs/getting-started.mdx`**
 
-```mdx
+````mdx
 ---
 title: Getting Started
 description: Stand up Cascade locally in under five minutes.
@@ -5070,6 +5208,7 @@ cd cascade
 cp .env.example .env       # generate secrets via the first-boot wizard
 docker compose up -d
 ```
+````
 
 Open http://localhost:3000 — the first request lands on the setup wizard.
 The setup wizard creates the admin account and generates random secrets
@@ -5084,7 +5223,8 @@ docker compose --profile demo up -d
 This adds an Ollama container with a small local model pre-pulled. Open the
 workflow named "Demo: Ollama → OpenAI fallback" and trigger a run — you'll
 see tier attribution visible on the read-only canvas.
-```
+
+````
 
 - [ ] **Step 8: Write `apps/cascade-docs/content/docs/architecture.mdx`**
 
@@ -5102,17 +5242,20 @@ This page is a 5-minute tour for newcomers.
 
 ## The big picture
 
-```
+````
+
                 +-----------------+        +--------+
-   Browser ---> |  cascade-web    | -----> |  API   | <---- CLI / Webhooks
-                | (Next 15, RF)   |  WS    | (Nest) |
-                +-----------------+ <----- +--------+
-                                              | uses TierFall
-                                              v
-                                +-----------------------------+
-                                | @tierfall/core + adapters   |
-                                | (Ollama / OpenAI / Anthr.)  |
-                                +-----------------------------+
+
+Browser ---> | cascade-web | -----> | API | <---- CLI / Webhooks
+| (Next 15, RF) | WS | (Nest) |
++-----------------+ <----- +--------+
+| uses TierFall
+v
++-----------------------------+
+| @tierfall/core + adapters |
+| (Ollama / OpenAI / Anthr.) |
++-----------------------------+
+
 ```
 
 ## Why the layout
@@ -5206,6 +5349,7 @@ EOF
 ## Task 15: Scaffold `cascade-mobile` Expo skeleton with tokens smoke test
 
 **Files:**
+
 - Generate via Expo CLI, then customize:
   - `apps/cascade-mobile/{package.json,app.json,tsconfig.json,index.ts,App.tsx,babel.config.js}`
 - Hand-author:
@@ -5457,6 +5601,7 @@ EOF
 ## Task 16: Scaffold E2E suites — `cascade-api-e2e` (Testcontainers) and `cascade-web-e2e` (Playwright)
 
 **Files:**
+
 - Create: `apps/cascade-api-e2e/{package.json,project.json,tsconfig.json,jest.config.ts}`
 - Create: `apps/cascade-api-e2e/src/{containers.ts,health.e2e-spec.ts}`
 - Create: `apps/cascade-web-e2e/{package.json,project.json,tsconfig.json,playwright.config.ts}`
@@ -5789,7 +5934,7 @@ Expected: 3 tests listed. No execution — `--list` is dry-run.
 
 - [ ] **Step 16: `apps/cascade-web-e2e/CLAUDE.md`**
 
-```markdown
+````markdown
 # cascade-web-e2e — Claude context
 
 **Purpose:** Playwright suite. Runs against the **full docker compose stack**
@@ -5802,6 +5947,7 @@ docker compose up -d --wait
 PLAYWRIGHT_BASE_URL=http://localhost:3001 pnpm --filter @tierfall/cascade-web-e2e e2e
 docker compose down -v
 ```
+````
 
 ## What it covers in v0.1
 
@@ -5820,7 +5966,8 @@ navigation works.
 - `forbidOnly` enabled in CI — `.only` in committed tests fails the build.
 - Retries=1 in CI for genuine flake recovery, NOT to mask broken tests. Flake policy
   in spec §8.4: a test that needs >1 retry is broken; quarantine with a tracked issue.
-```
+
+````
 
 - [ ] **Step 17: Commit**
 
@@ -5844,13 +5991,14 @@ cascade-web-e2e:
 Spec ref: §8.2 (integration), §8.3 (E2E), §8.4 (no-flake-tolerance policy).
 EOF
 )"
-```
+````
 
 ---
 
 ## Task 17: Add `docker-compose.yml` with profiles and per-app Dockerfiles
 
 **Files:**
+
 - Create: `docker-compose.yml` (single file, profile-tagged services)
 - Create: `.env.example` (root — base stack env vars)
 - Create: `apps/cascade-api/Dockerfile`
@@ -6047,11 +6195,11 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-cascade}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cascade}
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-cascade}"]
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-cascade}']
       interval: 5s
       timeout: 3s
       retries: 10
@@ -6061,11 +6209,11 @@ services:
     restart: unless-stopped
     command: redis-server --appendonly yes
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - '${REDIS_PORT:-6379}:6379'
     volumes:
       - redis-data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 5s
       timeout: 3s
       retries: 10
@@ -6078,7 +6226,7 @@ services:
     restart: unless-stopped
     depends_on:
       postgres: { condition: service_healthy }
-      redis:    { condition: service_healthy }
+      redis: { condition: service_healthy }
     environment:
       <<: *base-env
       DATABASE_URL: postgres://${POSTGRES_USER:-cascade}:${POSTGRES_PASSWORD:-cascade}@postgres:5432/${POSTGRES_DB:-cascade}?schema=public
@@ -6089,9 +6237,9 @@ services:
     volumes:
       - api-storage:/data/storage
     ports:
-      - "${CASCADE_API_PORT:-3000}:3000"
+      - '${CASCADE_API_PORT:-3000}:3000'
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/health']
       interval: 10s
       timeout: 3s
       retries: 5
@@ -6108,7 +6256,7 @@ services:
       <<: *base-env
       CASCADE_API_URL: http://api:3000
     ports:
-      - "${CASCADE_WEB_PORT:-3001}:3000"
+      - '${CASCADE_WEB_PORT:-3001}:3000'
 
   docs:
     build:
@@ -6117,37 +6265,37 @@ services:
     image: ghcr.io/tierfall/cascade-docs:dev
     restart: unless-stopped
     ports:
-      - "${CASCADE_DOCS_PORT:-3002}:3001"
+      - '${CASCADE_DOCS_PORT:-3002}:3001'
 
   ollama:
     image: ollama/ollama:latest
-    profiles: ["demo"]
+    profiles: ['demo']
     restart: unless-stopped
     ports:
-      - "${OLLAMA_PORT:-11434}:11434"
+      - '${OLLAMA_PORT:-11434}:11434'
     volumes:
       - ollama-models:/root/.ollama
     healthcheck:
-      test: ["CMD", "ollama", "list"]
+      test: ['CMD', 'ollama', 'list']
       interval: 15s
       timeout: 5s
       retries: 10
 
   minio:
     image: minio/minio:latest
-    profiles: ["minio"]
+    profiles: ['minio']
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-cascade}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-cascade}
     ports:
-      - "${MINIO_API_PORT:-9000}:9000"
-      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+      - '${MINIO_API_PORT:-9000}:9000'
+      - '${MINIO_CONSOLE_PORT:-9001}:9001'
     volumes:
       - minio-data:/data
     healthcheck:
-      test: ["CMD", "curl", "-fsS", "http://localhost:9000/minio/health/live"]
+      test: ['CMD', 'curl', '-fsS', 'http://localhost:9000/minio/health/live']
       interval: 10s
       timeout: 3s
       retries: 5
@@ -6222,6 +6370,7 @@ EOF
 ## Task 18: Add GitHub Actions workflows and codecov.yml
 
 **Files:**
+
 - Create: `.github/workflows/ci.yml` — lint + typecheck + unit + build on every push.
 - Create: `.github/workflows/integration.yml` — Testcontainers integration on push to `develop` + PRs.
 - Create: `.github/workflows/e2e.yml` — Playwright against compose stack on PR + main.
@@ -6455,7 +6604,7 @@ coverage:
     project:
       default:
         target: auto
-        threshold: 1%   # tolerate a 1pp drop from baseline
+        threshold: 1% # tolerate a 1pp drop from baseline
         informational: false
     patch:
       default:
@@ -6509,15 +6658,15 @@ updates:
     versioning-strategy: increase
     groups:
       nx-and-friends:
-        patterns: ["@nx/*", "nx"]
+        patterns: ['@nx/*', 'nx']
       eslint-and-friends:
-        patterns: ["eslint", "@eslint*", "typescript-eslint", "*-eslint*"]
+        patterns: ['eslint', '@eslint*', 'typescript-eslint', '*-eslint*']
       jest-and-friends:
-        patterns: ["jest", "ts-jest", "@types/jest"]
+        patterns: ['jest', 'ts-jest', '@types/jest']
       prisma:
-        patterns: ["prisma", "@prisma/*"]
+        patterns: ['prisma', '@prisma/*']
       next-react:
-        patterns: ["next", "react", "react-dom", "@types/react*"]
+        patterns: ['next', 'react', 'react-dom', '@types/react*']
 ```
 
 - [ ] **Step 8: Smoke-test workflows lint with `actionlint`** (optional, recommended)
@@ -6563,6 +6712,7 @@ EOF
 ## Task 19: Final documentation, ADRs, PR template, root contexts, gitnexus index, push develop
 
 **Files:**
+
 - Create: `README.md`, `CONTRIBUTING.md`, `CLAUDE.md` (root), `AGENTS.md` (root — gitnexus generates the bulk; we author the framing header)
 - Create: `docs/testing.md`, `docs/n8n-parity.md`
 - Create: `docs/adrs/0001-mirror-tierfall-toolchain.md` through `docs/adrs/0012-single-admin-auth-in-v01.md`
@@ -6572,7 +6722,7 @@ After commit: run `gitnexus index`, commit the generated `AGENTS.md` (refresh), 
 
 - [ ] **Step 1: Write `README.md`**
 
-```markdown
+````markdown
 # Cascade
 
 > Self-hosted visual AI workflow editor built on TierFall. Tier routing is on the canvas,
@@ -6596,6 +6746,7 @@ cd cascade
 cp .env.example .env
 docker compose up -d
 ```
+````
 
 Open <http://localhost:3001> → hit `/setup` → finish the wizard.
 
@@ -6623,7 +6774,8 @@ third parties.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md). Cascade follows the same conventions as TierFall:
 pnpm, Nx, Node 24, Conventional Commits, DCO sign-off, no `--no-verify`.
-```
+
+````
 
 - [ ] **Step 2: Write `CONTRIBUTING.md`** (~80 lines covering: prerequisites, the dev loop, branch model, commit format, DCO, PR checklist, how to run each test layer)
 
@@ -6645,7 +6797,7 @@ pnpm test            # all unit tests
 pnpm test:int        # integration tests (Testcontainers — spins up Postgres + Redis)
 pnpm test:e2e        # Playwright against `docker compose up`
 pnpm check           # lint + typecheck + test + build, all in parallel
-```
+````
 
 ## Branch model
 
@@ -6667,12 +6819,12 @@ Releases: PR `develop → main`, titled `release: vX.Y.Z`. Tag applied to `main`
 
 Per [spec §4.5](docs/superpowers/specs/2026-05-22-cascade-kickoff-design.md):
 
-| Package tier | Floor |
-| --- | --- |
-| Platform-neutral (`cascade-tokens`, `cascade-core`, `cascade-sdk`) | 100% |
-| Library (`cascade-ui`, `cascade-nodes`, `cascade-compiler`, `cascade-cli`) | 95% |
-| App (`cascade-web`, `cascade-api`) | 90% |
-| Docs | n/a |
+| Package tier                                                               | Floor |
+| -------------------------------------------------------------------------- | ----- |
+| Platform-neutral (`cascade-tokens`, `cascade-core`, `cascade-sdk`)         | 100%  |
+| Library (`cascade-ui`, `cascade-nodes`, `cascade-compiler`, `cascade-cli`) | 95%   |
+| App (`cascade-web`, `cascade-api`)                                         | 90%   |
+| Docs                                                                       | n/a   |
 
 PR-level: **100% patch coverage** — every new line covered by a test in the same PR.
 
@@ -6688,7 +6840,8 @@ PR-level: **100% patch coverage** — every new line covered by a test in the sa
 ## Testing strategy
 
 See [docs/testing.md](docs/testing.md).
-```
+
+````
 
 - [ ] **Step 3: Write `docs/testing.md`** — the testing strategy document
 
@@ -6787,7 +6940,7 @@ for genuine network blips, NOT for masking broken tests.
 | `e2e.yml` | PR + main | E2E (Playwright against compose) |
 | `rn-boundary.yml` | tokens/core/sdk/mobile changes | RN-target tsc + ESLint boundary |
 | `release.yml` | tag on main | Build, npm publish, GHCR push |
-```
+````
 
 - [ ] **Step 4: Write `docs/n8n-parity.md`** — the parity matrix (constraint #7)
 
@@ -6798,6 +6951,7 @@ Living document. Updated in every PR that lands a feature touching this matrix
 (see PR template). v0.1 release requires every row to have a non-empty Cascade status.
 
 Legend:
+
 - ✅ covered in current release
 - 🟡 planned for vN.x (annotated)
 - 🔵 differs intentionally (rationale linked)
@@ -6805,47 +6959,47 @@ Legend:
 
 ## Core concepts
 
-| n8n feature | Cascade status (v0.1) | Notes |
-| --- | --- | --- |
-| Workflows (JSON definition) | ✅ | `cascade-core/src/workflow-schema.ts` is the public contract (spec §9). |
-| Visual editor (drag-drop) | 🟡 v0.2 | v0.1 ships a read-only canvas. |
-| Nodes (extensible) | 🟡 v0.7 (plugin SDK) | v0.1 has four built-in types: llm, conditional, transform, http. |
-| Credentials (encrypted at rest) | 🟡 v0.1 backlog (`B-API-CREDENTIALS`) | Schema lands in v0.1; UI for managing them is v0.2. |
-| Per-node provider config | 🔵 differs | Cascade uses TierFall declarative policy instead. See [ADR 0006](adrs/0006-cascade-tokens-as-ssot.md) for the broader stance. |
-| Manual trigger | ✅ | `triggers: [{ kind: 'manual' }]`. |
-| Webhook trigger | ✅ | `triggers: [{ kind: 'webhook', path }]`. |
-| Cron trigger | 🟡 v0.4 | Backlog issue `B-TRIG-CRON`. |
-| File watcher trigger | 🟡 v0.4 | Backlog issue `B-TRIG-FILE`. |
+| n8n feature                     | Cascade status (v0.1)                 | Notes                                                                                                                         |
+| ------------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Workflows (JSON definition)     | ✅                                    | `cascade-core/src/workflow-schema.ts` is the public contract (spec §9).                                                       |
+| Visual editor (drag-drop)       | 🟡 v0.2                               | v0.1 ships a read-only canvas.                                                                                                |
+| Nodes (extensible)              | 🟡 v0.7 (plugin SDK)                  | v0.1 has four built-in types: llm, conditional, transform, http.                                                              |
+| Credentials (encrypted at rest) | 🟡 v0.1 backlog (`B-API-CREDENTIALS`) | Schema lands in v0.1; UI for managing them is v0.2.                                                                           |
+| Per-node provider config        | 🔵 differs                            | Cascade uses TierFall declarative policy instead. See [ADR 0006](adrs/0006-cascade-tokens-as-ssot.md) for the broader stance. |
+| Manual trigger                  | ✅                                    | `triggers: [{ kind: 'manual' }]`.                                                                                             |
+| Webhook trigger                 | ✅                                    | `triggers: [{ kind: 'webhook', path }]`.                                                                                      |
+| Cron trigger                    | 🟡 v0.4                               | Backlog issue `B-TRIG-CRON`.                                                                                                  |
+| File watcher trigger            | 🟡 v0.4                               | Backlog issue `B-TRIG-FILE`.                                                                                                  |
 
 ## Execution
 
-| n8n feature | Cascade status (v0.1) | Notes |
-| --- | --- | --- |
-| Run history | ✅ | `Run` + `NodeExecution` tables. |
-| Deterministic replay | ✅ | Full input + per-node output persisted per run. Spec §12 / constraint #12. |
-| Live execution feedback | ✅ | Socket.IO from API; node-color updates on canvas. Constraint #11. |
-| Execution safety limits | ✅ | Max nodes / duration / cost / retries env-configurable. Spec §5.7. |
-| Pause/resume | ⚫ | Not in roadmap; explicit YAGNI. |
-| Subworkflows | 🟡 v0.4 | Schema-version=`1.1.0` will introduce. |
+| n8n feature             | Cascade status (v0.1) | Notes                                                                      |
+| ----------------------- | --------------------- | -------------------------------------------------------------------------- |
+| Run history             | ✅                    | `Run` + `NodeExecution` tables.                                            |
+| Deterministic replay    | ✅                    | Full input + per-node output persisted per run. Spec §12 / constraint #12. |
+| Live execution feedback | ✅                    | Socket.IO from API; node-color updates on canvas. Constraint #11.          |
+| Execution safety limits | ✅                    | Max nodes / duration / cost / retries env-configurable. Spec §5.7.         |
+| Pause/resume            | ⚫                    | Not in roadmap; explicit YAGNI.                                            |
+| Subworkflows            | 🟡 v0.4               | Schema-version=`1.1.0` will introduce.                                     |
 
 ## Operations
 
-| n8n feature | Cascade status (v0.1) | Notes |
-| --- | --- | --- |
-| Self-hosted Docker | ✅ | Single `docker compose up`. Spec §5.1. |
-| Bundled local LLM | ✅ | `--profile demo` (Ollama). |
-| Pluggable storage (S3) | ✅ | `STORAGE_DRIVER=s3` env var. Spec §5.3. |
-| Multi-tenant + RBAC | 🟡 v0.5 | v0.1 is single-admin. Spec §5.5. |
-| Plugin SDK (third-party nodes) | 🟡 v0.7 | Workflow schema is forward-compatible. |
-| Marketplace | 🟡 v1.0 | Roadmap item. |
-| Cloud edition | ⚫ until v1.0 | Architectural neutrality preserved; license (SUL) protects the opportunity. |
+| n8n feature                    | Cascade status (v0.1) | Notes                                                                       |
+| ------------------------------ | --------------------- | --------------------------------------------------------------------------- |
+| Self-hosted Docker             | ✅                    | Single `docker compose up`. Spec §5.1.                                      |
+| Bundled local LLM              | ✅                    | `--profile demo` (Ollama).                                                  |
+| Pluggable storage (S3)         | ✅                    | `STORAGE_DRIVER=s3` env var. Spec §5.3.                                     |
+| Multi-tenant + RBAC            | 🟡 v0.5               | v0.1 is single-admin. Spec §5.5.                                            |
+| Plugin SDK (third-party nodes) | 🟡 v0.7               | Workflow schema is forward-compatible.                                      |
+| Marketplace                    | 🟡 v1.0               | Roadmap item.                                                               |
+| Cloud edition                  | ⚫ until v1.0         | Architectural neutrality preserved; license (SUL) protects the opportunity. |
 
 ## Compatibility
 
-| n8n feature | Cascade status (v0.1) | Notes |
-| --- | --- | --- |
-| Import n8n workflows | 🟡 community (post-v1.0) | Schema mapper would be third-party. |
-| Export workflows as TypeScript | ✅ unique to Cascade | `@tierfall/cascade-compiler`. |
+| n8n feature                    | Cascade status (v0.1)    | Notes                               |
+| ------------------------------ | ------------------------ | ----------------------------------- |
+| Import n8n workflows           | 🟡 community (post-v1.0) | Schema mapper would be third-party. |
+| Export workflows as TypeScript | ✅ unique to Cascade     | `@tierfall/cascade-compiler`.       |
 ```
 
 - [ ] **Step 5: Write the twelve ADRs** — each follows the template from the spec's ADR Roster section. Example for ADR 0001 below; the executor lands all twelve in this commit:
@@ -6868,6 +7022,7 @@ should adopt these exactly, partially, or fresh.
 ## Decision
 
 Mirror TierFall exactly:
+
 - pnpm 10.33.0 (locked via `packageManager` in package.json)
 - Node `>=24.0.0 <25.0.0`
 - DCO sign-off via `git commit -s` (prepare-commit-msg hook auto-appends)
@@ -6897,21 +7052,25 @@ Mirror TierFall exactly:
 **Spec reference:** §5.1
 
 ## Context
+
 Hard constraint #3 of the kickoff requires `docker compose up` at the repo root to bring up the
 full stack. The bundled-demo (Ollama) and bundled-S3 (MinIO) are tradeoffs: useful for some
 self-hosters, multi-GB or extra-port overhead for others.
 
 ## Decision
+
 Single `docker-compose.yml`. Optional services tagged with `profiles: [demo]` or `profiles: [minio]`.
 Activate via `docker compose --profile demo up` / `--profile minio`. **No** overlay files
 (`-f compose.demo.yml`).
 
 ## Consequences
+
 - One file, one mental model. `docker compose ps` shows base by default.
 - Activation syntax is `--profile`, not `-f`.
 - Self-hosters with their own Ollama / MinIO opt out by ignoring the profiles.
 
 ## Alternatives considered
+
 - Minimal-only (no profiles) — rejected; the bundled-demo path is too valuable.
 - Full-always (Ollama always bundled) — rejected; image bloat and runtime collision risk.
 - Overlay files — rejected; profiles are idiomatic in Compose v2.
@@ -6926,22 +7085,26 @@ Activate via `docker compose --profile demo up` / `--profile minio`. **No** over
 **Spec reference:** §4.2
 
 ## Context
+
 cascade-api needs an ORM that gives strict-TS types, robust migration management for
 self-hosters upgrading versions, and good DX. Constraint #13 (no `@ts-ignore`, no
 `eslint-disable`) eliminates ORMs that need lint suppressions to compile under
 `exactOptionalPropertyTypes`.
 
 ## Decision
+
 Prisma 6.x. Schema-first via `apps/cascade-api/prisma/schema.prisma`. `prisma migrate deploy`
 on container boot.
 
 ## Consequences
+
 - Best-in-class generated types match our strict-TS posture.
 - Rock-solid migration story for self-host upgrades.
 - ~50MB Rust query engine in the image (acceptable for self-hosted).
 - Generated client requires a postinstall step (handled in the Docker `builder` stage).
 
 ## Alternatives considered
+
 - **TypeORM** — rejected. Documented decorator-metadata friction with `exactOptionalPropertyTypes`
   pushes teams toward lint suppressions, which contradicts constraint #14.
 - **Drizzle** — strong contender, lighter, no codegen binary. Rejected for v0.1 because
@@ -6958,19 +7121,23 @@ on container boot.
 **Spec reference:** §6.1
 
 ## Context
+
 ReactFlow's graph state (nodes/edges) is inherently shape-y. v0.2 brings the visual editor,
 and constraint #11 requires live WebSocket-driven node-color updates without re-rendering
 the whole canvas. The state library has to support efficient partial subscriptions.
 
 ## Decision
+
 Zustand 5.x. Selector-based partial subscriptions feed only the components that care.
 
 ## Consequences
+
 - ~1KB runtime cost.
 - ReactFlow's own documentation uses Zustand — community alignment.
 - Smooth path to v0.2 editor.
 
 ## Alternatives considered
+
 - **Jotai** — atomic, but the array-shaped nodes/edges fight the atomic model.
 - **Redux Toolkit** — overkill at ~12KB; devtools nice but not enough to justify the weight.
 ```
@@ -6984,20 +7151,24 @@ Zustand 5.x. Selector-based partial subscriptions feed only the components that 
 **Spec reference:** §10.1
 
 ## Context
+
 Constraint #22 mandates a fair-code license (NOT MIT/Apache 2.0) that permits free
 self-hosting (individual, commercial, internal) and restricts running Cascade as a
 multi-tenant hosted service for third parties.
 
 ## Decision
+
 n8n Sustainable Use License v1.0.
 
 ## Consequences
+
 - Free for self-hosters, restricted only on the hosted-service-for-third-parties vector.
 - Battle-tested since 2022 in the n8n ecosystem.
 - Philosophically congruent — Cascade is positioned as an n8n alternative; using n8n's
   license signals alignment.
 
 ## Alternatives considered
+
 - **Elastic License v2** — mature, but no narrative payoff vs SUL given the n8n positioning.
 - **BSL with Change Date** — adds a time-bomb (`converts to Apache 2.0 in N years`).
   Some users find it reassuring; others confusing. SUL is simpler.
@@ -7013,22 +7184,26 @@ n8n Sustainable Use License v1.0.
 **Spec reference:** §7
 
 ## Context
+
 The mobile app (cascade-mobile in v0.1, full ship post-v1.0) must visually match the web app.
 The styling mechanism on each platform should consume a shared source of truth so visual
 fidelity is guaranteed at the token layer, not the class-name layer.
 
 ## Decision
+
 `packages/cascade-tokens/` is the single source of truth. Web consumes via a Tailwind preset
 (`@tierfall/cascade-ui/tailwind-preset`). Mobile consumes via `StyleSheet.create({ color: tokens.colors.tier[0] })`
 directly. NO NativeWind.
 
 ## Consequences
+
 - Token changes flow to both platforms by construction.
 - Web keeps Tailwind ergonomics. Mobile keeps RN's native StyleSheet idiom.
 - A future `cascade-ui-native` package (post-v1.0) hand-rolls RN components mirroring
   cascade-ui's prop API; tokens guarantee visual match.
 
 ## Alternatives considered
+
 - **NativeWind** — Tailwind-flavored, NOT Tailwind-identical. Compatibility holes
   (`gap`, arbitrary utilities, web-only pseudo-states) create ongoing audit burden.
 - **Tamagui everywhere** — single cross-platform styled-system, but requires replacing
@@ -7044,20 +7219,24 @@ directly. NO NativeWind.
 **Spec reference:** §4.3
 
 ## Context
+
 Constraint #18 requires 100% patch coverage on every PR. The tool needs robust diff-level
 analysis and a clear PR comment surface. TierFall already uses Codecov (`codecov.yml`),
 so consistency between sibling repos matters.
 
 ## Decision
+
 Codecov. Patch coverage **blocking** at 100%. Project coverage informational with a 1pp
 tolerance from baseline. Diverges from TierFall's `informational: true` patch config because
 Cascade is application code with a hard PR gate (TierFall is library code with looser policy).
 
 ## Consequences
+
 - Hosted dependency; outage means CI uploads fail (informative, but blocking).
 - Per-component breakdown shows package/app coverage at a glance.
 
 ## Alternatives considered
+
 - **jest-coverage-report-action** — no external service, but less polished diff UI and
   more bespoke wiring for patch analysis.
 - **Coveralls** — fine, less popular in JS ecosystem; no reason to diverge from TierFall.
@@ -7072,21 +7251,25 @@ Cascade is application code with a hard PR gate (TierFall is library code with l
 **Spec reference:** §4.4
 
 ## Context
+
 Coverage gates alone don't answer "do my tests actually catch bugs". Two augmentations
 exist: property-based tests (fast-check) and mutation testing (Stryker). Both useful;
 both have CI cost.
 
 ## Decision
+
 - **fast-check from v0.1** for `cascade-core` pure functions (graph utilities, schema
   rejection paths). Cheap to wire; big payoff on the constraint-#18 edge-case requirement.
 - **Stryker deferred to v0.2+.** Tracked as a Backlog issue. The 30+ minute mutation runs
   would dominate scaffolding-phase CI; revisit once the suite stabilizes.
 
 ## Consequences
+
 - v0.1 ships generative tests where they pay off most.
 - Stryker's "are these tests load-bearing?" signal arrives in v0.2.
 
 ## Alternatives considered
+
 - **Both from v0.1** — too much CI weight during scaffolding.
 - **Both deferred** — loses fast-check's cheap edge-case payoff in cascade-core.
 ```
@@ -7100,19 +7283,23 @@ both have CI cost.
 **Spec reference:** §5.2
 
 ## Context
+
 Self-hosters may run Cascade air-gapped. If docs only live on Vercel, a self-hosted
 deployment loses access to its own documentation.
 
 ## Decision
+
 `apps/cascade-docs` runs inside the compose stack at port 3001 (host-mapped to
 `CASCADE_DOCS_PORT`, default 3002). Vercel public deploy is a v0.x cleanup item;
 NO Vercel-specific code in the repo (Fumadocs static export is platform-agnostic).
 
 ## Consequences
+
 - Docs reachable on first boot, even without internet.
 - Compose stack is one container heavier (small image).
 
 ## Alternatives considered
+
 - **Vercel only** — breaks air-gapped use cases.
 - **Both from day one** — twice the release surface in v0.1; not justified by user demand.
 ```
@@ -7126,19 +7313,23 @@ NO Vercel-specific code in the repo (Fumadocs static export is platform-agnostic
 **Spec reference:** §5.3
 
 ## Context
+
 File uploads and workflow artifacts need to land somewhere. Self-hosters on a home server
 want local FS. Production self-hosters on k8s want S3-compatible (AWS S3, MinIO, R2, B2).
 
 ## Decision
+
 `StorageProvider` interface in `cascade-api`. Two implementations: `LocalFsStorage`
 (default, mounts to `/data/storage` volume) and `S3Storage` (activated by
 `STORAGE_DRIVER=s3`). MinIO available as an opt-in compose profile (`--profile minio`).
 
 ## Consequences
+
 - Single line of env config switches the storage backend.
 - No assumption about storage shape leaks into the business logic.
 
 ## Alternatives considered
+
 - **Local FS only** — too restrictive for production self-hosters.
 - **Bundle MinIO by default** — adds ~200MB image + extra port; only valuable for users
   who want S3 semantics.
@@ -7153,19 +7344,23 @@ want local FS. Production self-hosters on k8s want S3-compatible (AWS S3, MinIO,
 **Spec reference:** §10.2
 
 ## Context
+
 Seven publishable packages (`@tierfall/cascade-*`) plus three Docker images. Self-hosters
 need to reason about compatibility: which CLI works with which API works with which web image?
 
 ## Decision
+
 Synchronized via Nx release `fixed` mode. `git tag v0.1.0` → every package at `0.1.0`,
 every Docker image tagged `:0.1.0`. Revisit post-v1.0 when the ecosystem stabilizes;
 switching to independent is a Changesets config flag.
 
 ## Consequences
+
 - Simple mental model during the formative period.
 - Some packages bump for changes they didn't have — minor noise in npm.
 
 ## Alternatives considered
+
 - **Independent per-package semver from v0.1** — compatibility-matrix overhead too high
   for the v0.1 user.
 - **Synchronized permanently** — never split, even at v1.0; lock-in too rigid for mature OSS.
@@ -7180,20 +7375,24 @@ switching to independent is a Changesets config flag.
 **Spec reference:** §5.5
 
 ## Context
+
 Multi-tenant + RBAC is real engineering work. v0.1 is a read-only, self-hostable release;
 it doesn't need teams. The roadmap puts multi-tenant in v0.5.
 
 ## Decision
+
 First-to-`/setup` becomes the admin. JWT sessions in HttpOnly cookies. No second user
 account in v0.1; the admin model has one role.
 
 ## Consequences
+
 - Setup wizard is straightforward.
 - v0.5 multi-tenant work has to add user/team/role tables additively (no destructive
   schema changes against the v0.1 single-admin schema). The User table already has a
   `role` column to leave room for expansion.
 
 ## Alternatives considered
+
 - **Anonymous (no auth at all)** — too dangerous; secrets and credentials live here.
 - **Full multi-user from v0.1** — out of scope; delays v0.1 by months.
 ```
@@ -7210,6 +7409,7 @@ account in v0.1; the admin model has one role.
 ## Why
 
 <!-- The problem this solves OR the spec/issue link this advances -->
+
 Closes #
 
 ## Checklist (constraint #18 / spec §4.5)
@@ -7256,29 +7456,30 @@ Self-hosted visual AI workflow editor built on TierFall. **Tier routing is on th
 not in a settings panel.**
 
 ## Layout
-
 ```
+
 packages/
-  cascade-tokens/      # @tierfall/cascade-tokens — design tokens (platform-neutral)
-  cascade-core/        # @tierfall/cascade-core — workflow schema, graph utils (platform-neutral)
-  cascade-sdk/         # @tierfall/cascade-sdk — fetch client (platform-neutral)
-  cascade-ui/          # @tierfall/cascade-ui — Radix + Tailwind design system (web)
-  cascade-nodes/       # @tierfall/cascade-nodes — node registry (server)
-  cascade-compiler/    # @tierfall/cascade-compiler — graph → .ts emitter (server)
-  cascade-cli/         # @tierfall/cascade-cli — `cascade run` binary (server)
+cascade-tokens/ # @tierfall/cascade-tokens — design tokens (platform-neutral)
+cascade-core/ # @tierfall/cascade-core — workflow schema, graph utils (platform-neutral)
+cascade-sdk/ # @tierfall/cascade-sdk — fetch client (platform-neutral)
+cascade-ui/ # @tierfall/cascade-ui — Radix + Tailwind design system (web)
+cascade-nodes/ # @tierfall/cascade-nodes — node registry (server)
+cascade-compiler/ # @tierfall/cascade-compiler — graph → .ts emitter (server)
+cascade-cli/ # @tierfall/cascade-cli — `cascade run` binary (server)
 apps/
-  cascade-api/         # NestJS + Prisma + BullMQ + Socket.IO
-  cascade-web/         # Next.js 15
-  cascade-docs/        # Fumadocs (bundled in compose at port 3001)
-  cascade-mobile/      # Expo skeleton (RN-boundary smoke test, excluded from default build)
-  cascade-api-e2e/     # Testcontainers integration
-  cascade-web-e2e/     # Playwright E2E
+cascade-api/ # NestJS + Prisma + BullMQ + Socket.IO
+cascade-web/ # Next.js 15
+cascade-docs/ # Fumadocs (bundled in compose at port 3001)
+cascade-mobile/ # Expo skeleton (RN-boundary smoke test, excluded from default build)
+cascade-api-e2e/ # Testcontainers integration
+cascade-web-e2e/ # Playwright E2E
 docs/
-  superpowers/specs/   # design specs
-  superpowers/plans/   # implementation plans
-  adrs/                # architecture decision records
-  testing.md           # 3-layer testing strategy
-  n8n-parity.md        # parity matrix
+superpowers/specs/ # design specs
+superpowers/plans/ # implementation plans
+adrs/ # architecture decision records
+testing.md # 3-layer testing strategy
+n8n-parity.md # parity matrix
+
 ```
 
 ## Hard rules (canonical: CONTRIBUTING.md and spec §13)
@@ -7607,6 +7808,7 @@ After Task 19 Step 16, Phase 3 is complete. The repo state:
 - `docker compose up` smoke-tested; all three published-image targets build.
 
 **Phase 4 (Backlog execution)** is the standard Superpowers per-issue flow:
+
 1. Pick the top-priority issue from **Ready**.
 2. Run `/brainstorming` if the issue needs design clarification; otherwise skip to plan.
 3. Use `gitnexus impact <file>` and `gitnexus context <symbol>` to scope blast radius.
@@ -7616,9 +7818,3 @@ After Task 19 Step 16, Phase 3 is complete. The repo state:
 7. Reviewer verifies the PR template checklist; merge when green.
 8. When all v0.1.0 milestone issues close + the spec §11 acceptance criteria are
    all checked, open `release: v0.1.0` PR from `develop → main`, tag, publish.
-
-
-
-
-
-

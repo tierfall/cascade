@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# If the commit message already contains a Signed-off-by trailer, leave it alone.
+# Otherwise append one using the configured user.email / user.name. This makes
+# `git commit -s` redundant but still safe — and means a forgotten -s no longer
+# slips through.
+if ! grep -q '^Signed-off-by: ' "$1"; then
+  NAME=$(git config user.name)
+  EMAIL=$(git config user.email)
+  if [ -z "$NAME" ] || [ -z "$EMAIL" ]; then
+    echo "DCO hook: git config user.name / user.email must be set" >&2
+    exit 1
+  fi
+  printf '\nSigned-off-by: %s <%s>\n' "$NAME" "$EMAIL" >> "$1"
+fi
