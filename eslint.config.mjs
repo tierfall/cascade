@@ -63,4 +63,44 @@ export default tseslint.config(
     files: ['packages/cascade-cli/**/*.ts'],
     rules: { 'no-console': 'off' },
   },
+  // Platform-neutral packages: ban DOM/Node/React imports.
+  // Enforces spec §3.2: cascade-tokens, cascade-core, cascade-sdk must remain pure TS
+  // with zero web- or Node-only dependencies.
+  {
+    files: [
+      'packages/cascade-tokens/src/**/*.ts',
+      'packages/cascade-core/src/**/*.ts',
+      'packages/cascade-sdk/src/**/*.ts',
+    ],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'platform-neutral packages cannot import react' },
+            { name: 'react-dom', message: 'platform-neutral packages cannot import react-dom' },
+            { name: 'next', message: 'platform-neutral packages cannot import next' },
+            { name: 'next/server', message: 'platform-neutral packages cannot import next' },
+            { name: 'fs', message: 'platform-neutral packages cannot import node:fs' },
+            { name: 'path', message: 'platform-neutral packages cannot import node:path' },
+            { name: 'process', message: 'platform-neutral packages cannot import node:process' },
+            { name: 'child_process', message: 'platform-neutral packages cannot import node:child_process' },
+          ],
+          patterns: [
+            { group: ['node:*'], message: 'platform-neutral packages cannot import node:* modules' },
+            { group: ['react-native', 'react-native/*'], message: 'tokens/core/sdk must be cross-platform; do not import RN here' },
+            { group: ['@nestjs/*'], message: 'platform-neutral packages cannot import NestJS' },
+          ],
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        { name: 'window', message: 'platform-neutral packages cannot reference window' },
+        { name: 'document', message: 'platform-neutral packages cannot reference document' },
+        { name: 'navigator', message: 'platform-neutral packages cannot reference navigator' },
+        { name: '__dirname', message: 'platform-neutral packages cannot reference __dirname (Node-only)' },
+        { name: '__filename', message: 'platform-neutral packages cannot reference __filename (Node-only)' },
+      ],
+    },
+  },
 );
