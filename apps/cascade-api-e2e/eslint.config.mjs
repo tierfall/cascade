@@ -3,13 +3,16 @@ import baseConfig from '../../eslint.config.mjs';
 export default [
   ...baseConfig,
   {
-    // e2e support files are Nx-generated jest globalSetup/teardown stubs that use CJS
-    // module.exports syntax and eslint-disable comments. Relax rules for these files.
-    files: ['src/support/*.ts'],
+    // e2e spec files import NestJS app code via relative paths; ESLint's project service
+    // cannot always resolve cross-package types from pnpm's strict hoist. Disable the
+    // type-aware unsafe rules here — correctness is enforced by the tests themselves.
+    files: ['src/**/*.e2e-spec.ts', 'src/containers.ts'],
     rules: {
-      '@eslint-community/eslint-comments/no-use': 'off',
-      '@eslint-community/eslint-comments/disable-enable-pair': 'off',
-      '@eslint-community/eslint-comments/no-unlimited-disable': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
 ];

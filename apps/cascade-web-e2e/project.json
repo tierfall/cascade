@@ -1,12 +1,12 @@
 {
-  "name": "cascade-api-e2e",
+  "name": "cascade-web-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/cascade-api-e2e/src",
+  "sourceRoot": "apps/cascade-web-e2e/tests",
   "projectType": "application",
-  "implicitDependencies": ["cascade-api"],
+  "implicitDependencies": ["cascade-web", "cascade-api"],
   "tags": ["scope:integration", "type:e2e"],
   "targets": {
-    "test": { "executor": "nx:run-script", "options": { "script": "test" } },
+    "e2e": { "executor": "nx:run-script", "options": { "script": "e2e" }, "cache": false },
     "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
     "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
   }

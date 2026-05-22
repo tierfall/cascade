@@ -1,0 +1,24 @@
+{
+  "name": "@tierfall/cascade-api-e2e",
+  "version": "0.0.0",
+  "description": "Integration tests for cascade-api against real Postgres + Redis (Testcontainers).",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand",
+    "lint": "eslint --max-warnings=0 src",
+    "typecheck": "tsc --noEmit --pretty false"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "10.4.15",
+    "@testcontainers/postgresql": "10.16.0",
+    "@testcontainers/redis": "10.16.0",
+    "testcontainers": "10.16.0",
+    "supertest": "7.0.0",
+    "@types/supertest": "6.0.2"
+  },
+  "dependencies": {
+    "cascade-api": "workspace:*"
+  }
+}

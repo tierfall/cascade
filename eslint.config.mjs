@@ -40,7 +40,14 @@ export default tseslint.config(
     extends: [...tseslint.configs.strictTypeChecked, ...tseslint.configs.stylisticTypeChecked],
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: [
+            // e2e spec files that live outside a standard tsconfig include may not be
+            // auto-discovered by the project service. Allow them to fall back to the
+            // default project so lint-staged doesn't block commits with parse errors.
+            'apps/cascade-web-e2e/tests/*.spec.ts',
+          ],
+        },
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -63,13 +70,22 @@ export default tseslint.config(
     },
   },
   {
-    files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/test/**/*.ts', '**/test/**/*.tsx'],
+    files: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/*.spec.ts',
+      '**/*.e2e-spec.ts',
+      '**/test/**/*.ts',
+      '**/test/**/*.tsx',
+    ],
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/dot-notation': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
     },
   },
   {
