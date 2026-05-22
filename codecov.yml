@@ -1,0 +1,39 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1% # tolerate a 1pp drop from baseline
+        informational: false
+    patch:
+      default:
+        target: 100%
+        threshold: 0%
+        only_pulls: true
+        informational: false
+
+comment:
+  layout: 'diff, files, components'
+  require_changes: true
+  behavior: default
+
+component_management:
+  individual_components:
+    - component_id: cascade_tokens
+      paths: [packages/cascade-tokens/**]
+    - component_id: cascade_core
+      paths: [packages/cascade-core/**]
+    - component_id: cascade_sdk
+      paths: [packages/cascade-sdk/**]
+    - component_id: cascade_ui
+      paths: [packages/cascade-ui/**]
+    - component_id: cascade_nodes
+      paths: [packages/cascade-nodes/**]
+    - component_id: cascade_compiler
+      paths: [packages/cascade-compiler/**]
+    - component_id: cascade_cli
+      paths: [packages/cascade-cli/**]
+    - component_id: cascade_api
+      paths: [apps/cascade-api/**]
+    - component_id: cascade_web
+      paths: [apps/cascade-web/**]

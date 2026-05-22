@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 10
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: weekly }
+    open-pull-requests-limit: 10
+    versioning-strategy: increase
+    groups:
+      nx-and-friends:
+        patterns: ['@nx/*', 'nx']
+      eslint-and-friends:
+        patterns: ['eslint', '@eslint*', 'typescript-eslint', '*-eslint*']
+      jest-and-friends:
+        patterns: ['jest', 'ts-jest', '@types/jest']
+      prisma:
+        patterns: ['prisma', '@prisma/*']
+      next-react:
+        patterns: ['next', 'react', 'react-dom', '@types/react*']

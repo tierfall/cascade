@@ -1,0 +1,32 @@
+name: rn-boundary
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    paths:
+      - 'packages/cascade-tokens/**'
+      - 'packages/cascade-core/**'
+      - 'packages/cascade-sdk/**'
+      - 'apps/cascade-mobile/**'
+      - 'tools/check-platform-neutral.mjs'
+      - 'tools/rn-target-tsconfig.json'
+
+jobs:
+  check-boundary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@v6
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Lint + RN-target tsc on platform-neutral packages
+        run: node tools/check-platform-neutral.mjs
+      - name: TypeCheck cascade-mobile against Expo
+        run: pnpm --filter @tierfall/cascade-mobile typecheck
