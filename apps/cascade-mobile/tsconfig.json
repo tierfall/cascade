@@ -1,0 +1,16 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
+    "paths": {
+      "@tierfall/cascade-tokens": ["../../packages/cascade-tokens/src/index.ts"],
+      "@tierfall/cascade-sdk": ["../../packages/cascade-sdk/src/index.ts"],
+      "@tierfall/cascade-core": ["../../packages/cascade-core/src/index.ts"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
+}

@@ -1,0 +1,28 @@
+{
+  "name": "@tierfall/cascade-mobile",
+  "version": "0.0.0",
+  "description": "Cascade mobile skeleton. v0.1 RN-boundary smoke test for constraint #5; not a shipping app.",
+  "license": "SEE LICENSE IN ../../LICENSE",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "test": "echo 'cascade-mobile: skeleton only — no unit suite in v0.1' && exit 0",
+    "typecheck": "tsc --noEmit --pretty false",
+    "lint": "eslint --max-warnings=0 ."
+  },
+  "dependencies": {
+    "@tierfall/cascade-tokens": "workspace:*",
+    "@tierfall/cascade-sdk": "workspace:*",
+    "expo": "52.0.20",
+    "expo-status-bar": "2.0.0",
+    "react": "19.0.0",
+    "react-native": "0.76.5"
+  },
+  "devDependencies": {
+    "@types/react": "19.0.0",
+    "typescript": "6.0.3"
+  }
+}

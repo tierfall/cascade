@@ -1,0 +1,13 @@
+{
+  "name": "cascade-mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/cascade-mobile",
+  "projectType": "application",
+  "tags": ["scope:rn-boundary-smoke", "type:app", "excluded-from-default"],
+  "targets": {
+    "build": { "executor": "nx:noop", "configurations": { "skip": {} } },
+    "test": { "executor": "nx:run-script", "options": { "script": "test" } },
+    "lint": { "executor": "nx:run-script", "options": { "script": "lint" } },
+    "typecheck": { "executor": "nx:run-script", "options": { "script": "typecheck" } }
+  }
+}

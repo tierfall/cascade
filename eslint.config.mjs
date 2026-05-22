@@ -28,6 +28,8 @@ export default tseslint.config(
       'apps/cascade-api/webpack.config.js',
       'apps/cascade-web/next.config.js',
       'apps/cascade-web/postcss.config.js',
+      // Expo's babel config uses CJS module.exports — not a TS project file.
+      'apps/cascade-mobile/babel.config.js',
     ],
   },
   eslint.configs.recommended,
