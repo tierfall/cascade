@@ -127,6 +127,43 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
 
+  packages/cascade-nodes:
+    dependencies:
+      '@tierfall/cascade-core':
+        specifier: workspace:*
+        version: link:../cascade-core
+      '@tierfall/core':
+        specifier: ^0.1.0
+        version: 0.1.0
+      zod:
+        specifier: 3.24.1
+        version: 3.24.1
+    devDependencies:
+      '@jest/globals':
+        specifier: 29.7.0
+        version: 29.7.0
+      '@types/jest':
+        specifier: 29.5.14
+        version: 29.5.14
+      '@types/node':
+        specifier: 24.0.0
+        version: 24.0.0
+      eslint:
+        specifier: 9.18.0
+        version: 9.18.0(jiti@2.7.0)
+      jest:
+        specifier: 29.7.0
+        version: 29.7.0(@types/node@24.0.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.0.0)(typescript@6.0.3))
+      ts-jest:
+        specifier: 29.4.10
+        version: 29.4.10(@babel/core@7.29.0)(@jest/transform@29.7.0)(@jest/types@29.6.3)(babel-jest@29.7.0(@babel/core@7.29.0))(esbuild@0.27.7)(jest-util@29.7.0)(jest@29.7.0(@types/node@24.0.0)(babel-plugin-macros@3.1.0)(ts-node@10.9.2(@types/node@24.0.0)(typescript@6.0.3)))(typescript@6.0.3)
+      tsup:
+        specifier: 8.5.1
+        version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@6.0.3)(yaml@2.9.0)
+      typescript:
+        specifier: 6.0.3
+        version: 6.0.3
+
   packages/cascade-sdk:
     dependencies:
       '@tierfall/cascade-core':
@@ -2621,6 +2658,9 @@ packages:
         optional: true
       '@types/react-dom':
         optional: true
+
+  '@tierfall/core@0.1.0':
+    resolution: {integrity: sha512-5GW5xCiCpV3gxq65rSlHbtICXfaC17gfsyYOGXsFLPw61vok8qgrMuucWAK1xoz8DonweVeFQVdOWnjwG850Gw==}
 
   '@tootallnate/once@2.0.1':
     resolution: {integrity: sha512-HqmEUIGRJ5fSXchkVgR5F7qn48bDBzv0kWj/Kfu5e6uci4UlEeng4331LnBkWffb++Ei3FOVLxo8JJWMFBDMeQ==}
@@ -10562,6 +10602,8 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.7
       '@types/react-dom': 19.0.3(@types/react@19.0.7)
+
+  '@tierfall/core@0.1.0': {}
 
   '@tootallnate/once@2.0.1': {}
 
