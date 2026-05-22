@@ -38,7 +38,7 @@ test-results/
 
 # Generated
 *.tsbuildinfo
-.gitnexus/cache/
+.gitnexus/
 
 # Prisma
 apps/cascade-api/prisma/migrations/dev.db*
