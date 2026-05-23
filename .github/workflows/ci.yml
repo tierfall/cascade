@@ -19,11 +19,16 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
-      - run: pnpm exec nx affected -t lint --parallel=3
-      - run: pnpm exec nx affected -t typecheck --parallel=3
-      - run: pnpm exec nx affected -t test --parallel=3 -- --coverage
+      - name: Generate Prisma client
+        run: pnpm --filter cascade-api exec prisma generate
+      - name: Build all projects (generates cascade-ui dist, fumadocs .source, etc.)
+        run: pnpm exec nx run-many -t build --parallel=3
+      - run: pnpm exec nx run-many -t lint --parallel=3
+      - run: pnpm exec nx run-many -t typecheck --parallel=3
+      - run: pnpm exec nx run-many -t test --parallel=3 -- --coverage
       - name: Upload coverage to Codecov
         if: always()
+        continue-on-error: true
         uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true

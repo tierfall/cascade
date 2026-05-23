@@ -5,7 +5,7 @@
   "license": "SEE LICENSE IN ../../LICENSE",
   "private": true,
   "scripts": {
-    "build": "nx build cascade-web",
+    "build": "next build",
     "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --coverage",
     "lint": "eslint --max-warnings=0 app test",
     "typecheck": "tsc --noEmit --pretty false"
