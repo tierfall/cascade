@@ -19,6 +19,8 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter cascade-api exec prisma generate
       - run: pnpm exec nx run-many -t lint --parallel=3
       - run: pnpm exec nx run-many -t typecheck --parallel=3
       - run: pnpm exec nx run-many -t test --parallel=3 -- --coverage

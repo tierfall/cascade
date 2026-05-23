@@ -26,13 +26,11 @@
     },
     "lint": {
       "cache": true,
-      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"],
-      "dependsOn": ["^build"]
+      "inputs": ["default", "{workspaceRoot}/eslint.config.mjs"]
     },
     "typecheck": {
       "cache": true,
-      "inputs": ["default", "^production"],
-      "dependsOn": ["^build"]
+      "inputs": ["default", "^production"]
     },
     "e2e": {
       "cache": false,
