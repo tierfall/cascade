@@ -14,7 +14,14 @@
     "noEmit": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": "..",
+    "paths": {
+      "@tierfall/cascade-tokens": ["packages/cascade-tokens/src/index.ts"],
+      "@tierfall/cascade-core": ["packages/cascade-core/src/index.ts"],
+      "@tierfall/cascade-sdk": ["packages/cascade-sdk/src/index.ts"]
+    }
   },
   "include": [
     "./rn-target-globals.d.ts",
