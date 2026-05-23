@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "description": "Graph-to-TypeScript compiler for Cascade workflows. v0.1 ships a trivial SDK-passthrough emitter; v0.3 ships the typed pipeline emitter.",
   "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tierfall/cascade.git",
+    "directory": "packages/cascade-compiler"
+  },
+  "homepage": "https://github.com/tierfall/cascade",
+  "bugs": {
+    "url": "https://github.com/tierfall/cascade/issues"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

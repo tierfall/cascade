@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "description": "Typed fetch-based client for the Cascade API. Platform-neutral pure TypeScript.",
   "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tierfall/cascade.git",
+    "directory": "packages/cascade-sdk"
+  },
+  "homepage": "https://github.com/tierfall/cascade",
+  "bugs": {
+    "url": "https://github.com/tierfall/cascade/issues"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",

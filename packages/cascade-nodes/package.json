@@ -3,6 +3,15 @@
   "version": "0.0.0",
   "description": "Cascade node-type registry. Server-side handlers + client-side metadata for LLM, Conditional, Transform, HTTP nodes.",
   "license": "SEE LICENSE IN ../../LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tierfall/cascade.git",
+    "directory": "packages/cascade-nodes"
+  },
+  "homepage": "https://github.com/tierfall/cascade",
+  "bugs": {
+    "url": "https://github.com/tierfall/cascade/issues"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
