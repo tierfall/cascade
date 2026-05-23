@@ -21,6 +21,8 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - name: Generate Prisma client
         run: pnpm --filter cascade-api exec prisma generate
+      - name: Build all projects (generates cascade-ui dist, fumadocs .source, etc.)
+        run: pnpm exec nx run-many -t build --parallel=3
       - run: pnpm exec nx run-many -t lint --parallel=3
       - run: pnpm exec nx run-many -t typecheck --parallel=3
       - run: pnpm exec nx run-many -t test --parallel=3 -- --coverage
