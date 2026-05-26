@@ -31,12 +31,6 @@ const config: Config = {
       functions: 100,
       lines: 100,
     },
-    './src/secrets/secret-key.ts': {
-      statements: 0, // pure type export — only imported as `import type`, never executed
-      branches: 100,
-      functions: 100,
-      lines: 0,
-    },
     './src/setup/setup.service.ts': {
       statements: 100,
       branches: 85, // floor accommodates compiler-generated unreachable typeof guards on decorator metadata; real branches enforced above this
