@@ -37,6 +37,12 @@ const config: Config = {
       functions: 100,
       lines: 0,
     },
+    './src/setup/setup.service.ts': {
+      statements: 100,
+      branches: 0, // decorator-metadata typeof guards are compiler-generated unreachable branches
+      functions: 100,
+      lines: 100,
+    },
   },
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: { '^(\\.{1,2}/.*)\\.js$': '$1' },
