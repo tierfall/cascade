@@ -19,8 +19,7 @@
     "testcontainers": "10.16.0",
     "supertest": "7.0.0",
     "@types/supertest": "6.0.2",
-    "argon2": "^0.41",
-    "rxjs": "7.8.1"
+    "argon2": "^0.41"
   },
   "dependencies": {
     "cascade-api": "workspace:*"

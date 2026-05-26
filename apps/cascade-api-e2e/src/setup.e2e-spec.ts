@@ -5,6 +5,7 @@ import argon2 from 'argon2';
 import request from 'supertest';
 import { AppModule } from '../../cascade-api/src/app.module.js';
 import { PrismaService } from '../../cascade-api/src/prisma/prisma.service.js';
+import type { SecretKey } from '../../cascade-api/src/secrets/secret-key.js';
 import { SecretService } from '../../cascade-api/src/secrets/secret.service.js';
 import { type BackingServices, startBackingServices, stopBackingServices } from './containers.js';
 
@@ -42,9 +43,7 @@ describe('/setup (integration)', () => {
     delete process.env.CREDENTIALS_ENC_KEY;
     // Reset the SecretService cache by reaching into private state — the
     // service is otherwise long-lived for the whole app instance.
-    // The cache may be Map<SecretKey, string> or Map<SecretKey, Promise<string>>
-    // depending on the implementation version; keep the cast loose.
-    (secretService as unknown as { cache: Map<string, unknown> }).cache.clear();
+    (secretService as unknown as { cache: Map<SecretKey, Promise<string>> }).cache.clear();
   });
 
   it('GET /setup returns 200 with form schema when no admin exists', async () => {
