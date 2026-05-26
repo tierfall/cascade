@@ -69,3 +69,9 @@ model EncryptedCredential {
   authTag    Bytes
   createdAt  DateTime @default(now())
 }
+
+model InstanceSecret {
+  key       String   @id // "JWT_SECRET" | "CREDENTIALS_ENC_KEY"
+  value     String // hex-encoded random bytes
+  createdAt DateTime @default(now())
+}
