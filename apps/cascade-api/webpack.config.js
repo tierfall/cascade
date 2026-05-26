@@ -12,8 +12,20 @@ module.exports = composePlugins(
     config.resolve = config.resolve || {};
     config.resolve.extensionAlias = {
       '.js': ['.ts', '.js'],
-      ...( config.resolve.extensionAlias || {} ),
+      ...(config.resolve.extensionAlias || {}),
     };
+
+    // argon2 ships a .node native binding that cannot be webpacked. Keep it as a
+    // runtime require resolved from node_modules in the Docker runner (the
+    // Dockerfile copies the workspace node_modules into the final stage).
+    const argon2External = { argon2: 'commonjs argon2' };
+    if (Array.isArray(config.externals)) {
+      config.externals.push(argon2External);
+    } else if (typeof config.externals === 'object' && config.externals !== null) {
+      config.externals = [config.externals, argon2External];
+    } else {
+      config.externals = [argon2External];
+    }
 
     // Suppress "Module not found" errors for NestJS optional peer deps that
     // are never actually loaded in this app (no websockets, no microservices,

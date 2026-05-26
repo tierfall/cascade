@@ -21,7 +21,25 @@ const config: Config = {
     global: { statements: 90, branches: 90, functions: 90, lines: 90 },
     './src/health/health.controller.ts': {
       statements: 100,
-      branches: 0, // decorator-metadata typeof guards are compiler-generated unreachable branches
+      branches: 75, // floor accommodates compiler-generated unreachable typeof guards on decorator metadata; real branches enforced above this
+      functions: 100,
+      lines: 100,
+    },
+    './src/secrets/secret.service.ts': {
+      statements: 100,
+      branches: 85, // floor accommodates compiler-generated unreachable typeof guards on decorator metadata; real branches enforced above this
+      functions: 100,
+      lines: 100,
+    },
+    './src/setup/setup.service.ts': {
+      statements: 100,
+      branches: 85, // floor accommodates compiler-generated unreachable typeof guards on decorator metadata; real branches enforced above this
+      functions: 100,
+      lines: 100,
+    },
+    './src/setup/setup.controller.ts': {
+      statements: 100,
+      branches: 75, // floor accommodates compiler-generated unreachable typeof guards on decorator metadata; real branches enforced above this
       functions: 100,
       lines: 100,
     },

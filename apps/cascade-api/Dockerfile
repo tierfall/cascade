@@ -31,5 +31,16 @@ COPY --from=builder /repo/node_modules ./node_modules
 COPY --from=builder /repo/dist/apps/cascade-api ./dist
 COPY --from=builder /repo/apps/cascade-api/prisma ./prisma
 COPY --from=builder /repo/apps/cascade-api/package.json ./package.json
+# argon2 has a .node native binding that webpack can't bundle (externalized in
+# webpack.config.js). pnpm only stores it inside .pnpm/argon2@VER/node_modules,
+# not at the workspace-root node_modules — so the externalized require('argon2')
+# fails to resolve. Symlink argon2 and its non-bundled peers up to top level.
+RUN cd node_modules \
+ && ARGON2_PKG=$(ls -d .pnpm/argon2@*/node_modules 2>/dev/null | head -n1) \
+ && [ -n "$ARGON2_PKG" ] \
+ && ln -sfn "$ARGON2_PKG/argon2"          argon2 \
+ && ln -sfn "$ARGON2_PKG/@phc"            @phc \
+ && ln -sfn "$ARGON2_PKG/node-gyp-build"  node-gyp-build \
+ && ln -sfn "$ARGON2_PKG/node-addon-api"  node-addon-api
 EXPOSE 3000
 CMD ["node", "dist/main.js"]
