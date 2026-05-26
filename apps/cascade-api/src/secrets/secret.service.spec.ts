@@ -68,4 +68,39 @@ describe('SecretService', () => {
     });
     await expect(service.get('JWT_SECRET')).resolves.toBe('db-jwt');
   });
+
+  it('caches env-sourced values — second get after env change still returns the cached value', async () => {
+    process.env.JWT_SECRET = 'env-jwt';
+    await expect(service.get('JWT_SECRET')).resolves.toBe('env-jwt');
+    process.env.JWT_SECRET = 'rotated';
+    await expect(service.get('JWT_SECRET')).resolves.toBe('env-jwt');
+  });
+
+  it('coalesces concurrent uncached gets — one DB call across N parallel readers', async () => {
+    let resolveFn: (value: InstanceSecretRow) => void = () => undefined;
+    findUnique.mockImplementationOnce(
+      () =>
+        new Promise<InstanceSecretRow>((resolve) => {
+          resolveFn = resolve;
+        }),
+    );
+    const a = service.get('JWT_SECRET');
+    const b = service.get('JWT_SECRET');
+    const c = service.get('JWT_SECRET');
+    expect(findUnique).toHaveBeenCalledTimes(1);
+    resolveFn({ key: 'JWT_SECRET', value: 'shared', createdAt: new Date() });
+    await expect(Promise.all([a, b, c])).resolves.toEqual(['shared', 'shared', 'shared']);
+  });
+
+  it('evicts the cache when DB fetch rejects so the next call retries', async () => {
+    findUnique.mockRejectedValueOnce(new Error('db down'));
+    await expect(service.get('JWT_SECRET')).rejects.toThrow('db down');
+    findUnique.mockResolvedValueOnce({
+      key: 'JWT_SECRET',
+      value: 'recovered',
+      createdAt: new Date(),
+    });
+    await expect(service.get('JWT_SECRET')).resolves.toBe('recovered');
+    expect(findUnique).toHaveBeenCalledTimes(2);
+  });
 });

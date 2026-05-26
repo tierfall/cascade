@@ -11,25 +11,28 @@ export class SecretNotInitializedError extends Error {
 
 @Injectable()
 export class SecretService {
-  private readonly cache = new Map<SecretKey, string>();
+  private readonly cache = new Map<SecretKey, Promise<string>>();
 
   constructor(private readonly prisma: PrismaService) {}
 
-  async get(key: SecretKey): Promise<string> {
+  get(key: SecretKey): Promise<string> {
     const cached = this.cache.get(key);
     if (cached !== undefined) return cached;
+    const resolved = this.resolve(key);
+    this.cache.set(key, resolved);
+    resolved.catch(() => this.cache.delete(key));
+    return resolved;
+  }
 
+  private async resolve(key: SecretKey): Promise<string> {
     const env = process.env[key];
     if (env !== undefined && env.length > 0) {
-      this.cache.set(key, env);
       return env;
     }
-
     const row = await this.prisma.instanceSecret.findUnique({ where: { key } });
     if (row === null) {
       throw new SecretNotInitializedError(key);
     }
-    this.cache.set(key, row.value);
     return row.value;
   }
 }
