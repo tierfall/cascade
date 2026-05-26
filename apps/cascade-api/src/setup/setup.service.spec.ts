@@ -39,14 +39,16 @@ function buildTx(): MockTx {
 describe('SetupService', () => {
   let tx: MockTx;
   let service: SetupService;
+  let transactionMock: jest.Mock<<T>(fn: (t: unknown) => Promise<T>) => Promise<T>>;
   const userCountTop = jest.fn<() => Promise<number>>();
 
   beforeEach(async () => {
     tx = buildTx();
     userCountTop.mockReset();
+    transactionMock = jest.fn(<T>(fn: (t: unknown) => Promise<T>): Promise<T> => fn(tx));
     const prisma = {
       user: { count: userCountTop },
-      $transaction: <T>(fn: (t: unknown) => Promise<T>): Promise<T> => fn(tx),
+      $transaction: transactionMock,
     } as unknown as PrismaService;
     const moduleRef: TestingModule = await Test.createTestingModule({
       providers: [SetupService, { provide: PrismaService, useValue: prisma }],
@@ -78,6 +80,7 @@ describe('SetupService', () => {
 
       const result = await service.initialize(body);
 
+      expect(transactionMock).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ id: 'u1', email: body.email });
       const createArgs = tx.user.create.mock.calls[0]?.[0];
       expect(createArgs?.data.email).toBe(body.email);

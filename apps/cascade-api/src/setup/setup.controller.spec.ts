@@ -3,7 +3,7 @@ import { BadRequestException, HttpStatus } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import type { Response } from 'express';
 import { SetupController } from './setup.controller.js';
-import { AlreadyInitializedError } from './setup.errors.js';
+import { AlreadyInitializedError, ConcurrentSetupError } from './setup.errors.js';
 import { SetupService } from './setup.service.js';
 
 function buildRes(): { res: Response; statusFn: jest.Mock; jsonFn: jest.Mock } {
@@ -77,6 +77,13 @@ describe('SetupController', () => {
       await expect(
         controller.post({ email: 'admin@example.com', password: 'correct-horse-1' }),
       ).rejects.toBeInstanceOf(AlreadyInitializedError);
+    });
+
+    it('propagates ConcurrentSetupError for the filter to handle', async () => {
+      initialize.mockRejectedValueOnce(new ConcurrentSetupError());
+      await expect(
+        controller.post({ email: 'admin@example.com', password: 'correct-horse-1' }),
+      ).rejects.toBeInstanceOf(ConcurrentSetupError);
     });
   });
 });
