@@ -5,9 +5,39 @@ on:
     tags: ['v*.*.*']
 
 jobs:
+  github-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@v6
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generate notes from Conventional Commits between tags
+        run: |
+          # nx release changelog renders the markdown using @nx/release's
+          # conventional-commit parser and the previous semver tag as the base.
+          # --tag-version-prefix='' so it matches our `v1.2.3` tag scheme.
+          pnpm exec nx release changelog "${GITHUB_REF_NAME}" \
+            --dry-run=false \
+            --create-release=github \
+            --git-push=false \
+            --git-tag=false \
+            --git-commit=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   publish-npm:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: github-release
     permissions:
       contents: write
       id-token: write
