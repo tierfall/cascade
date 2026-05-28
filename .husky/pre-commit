@@ -1,3 +1,12 @@
 pnpm exec lint-staged
 pnpm typecheck
-pnpm exec nx affected -t test --base=HEAD~1 --head=HEAD --parallel=3 || pnpm exec nx run-many -t test --parallel=3
+
+# Probe whether `nx affected` has a usable merge-base. If HEAD~1 doesn't exist
+# (initial commit, shallow clone) we run-many; otherwise we run affected and
+# let its real exit code propagate so a failing test doesn't trigger a
+# redundant full-suite re-run that doubles failure output.
+if git rev-parse --verify --quiet HEAD~1 >/dev/null; then
+  pnpm exec nx affected -t test --base=HEAD~1 --head=HEAD --parallel=3
+else
+  pnpm exec nx run-many -t test --parallel=3
+fi
