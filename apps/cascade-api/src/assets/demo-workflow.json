@@ -1,0 +1,34 @@
+{
+  "schemaVersion": "1.0.0",
+  "id": "demo-tier-ramp",
+  "name": "Tier-ramp demo",
+  "nodes": [
+    {
+      "id": "summarize",
+      "type": "llm",
+      "config": {
+        "prompt": "Summarize the following text in one sentence: {{ input.text }}",
+        "tierPolicy": {
+          "preferLocal": true,
+          "maxCostUsd": 0.02,
+          "allowedTiers": [0, 2, 3],
+          "fallbackOnError": true
+        },
+        "adapters": [
+          { "tier": 0, "name": "ollama", "model": "llama3.2:3b" },
+          { "tier": 2, "name": "openai-compatible", "model": "gpt-4o-mini" },
+          { "tier": 3, "name": "anthropic", "model": "claude-haiku-4-5-20251001" }
+        ]
+      }
+    },
+    {
+      "id": "wrap",
+      "type": "transform",
+      "config": {
+        "expression": "{\"summary\": summarize, \"vendor\": $exists($lookup($, 'tier_attribution.adapter')) ? tier_attribution.adapter : 'unknown'}"
+      }
+    }
+  ],
+  "edges": [{ "from": "summarize", "to": "wrap" }],
+  "triggers": [{ "kind": "manual" }]
+}
