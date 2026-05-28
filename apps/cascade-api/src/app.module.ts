@@ -7,6 +7,7 @@ import { HealthModule } from './health/health.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { SecretModule } from './secrets/secret.module.js';
 import { SetupModule } from './setup/setup.module.js';
+import { WorkflowModule } from './workflows/workflow.module.js';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SetupModule } from './setup/setup.module.js';
     AuthModule,
     SetupModule,
     HealthModule,
+    WorkflowModule,
   ],
 })
 export class AppModule implements NestModule {
