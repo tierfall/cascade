@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit --pretty false"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "3.1055.0",
     "@nestjs/common": "10.4.15",
     "@nestjs/config": "3.3.0",
     "@nestjs/jwt": "11.0.2",

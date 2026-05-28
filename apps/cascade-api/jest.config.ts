@@ -14,6 +14,9 @@ const config: Config = {
     '!src/main.ts',
     '!src/**/*.module.ts',
     '!src/**/index.ts',
+    // s3-storage.ts requires a real S3 endpoint to exercise. Coverage comes
+    // from the cascade-api-e2e MinIO integration test, not the unit suite.
+    '!src/storage/s3-storage.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'json-summary'],
