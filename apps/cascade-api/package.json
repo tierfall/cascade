@@ -20,6 +20,7 @@
     "@nestjs/terminus": "10.3.0",
     "@nestjs/throttler": "6.4.0",
     "@prisma/client": "6.2.0",
+    "@tierfall/cascade-core": "workspace:*",
     "argon2": "^0.41.1",
     "bullmq": "5.34.4",
     "cookie-parser": "1.4.7",
