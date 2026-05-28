@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import cookieParser from 'cookie-parser';
 import { AuthModule } from './auth/auth.module.js';
+import { CredentialModule } from './credentials/credential.module.js';
 import { HealthModule } from './health/health.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { SecretModule } from './secrets/secret.module.js';
@@ -19,6 +20,7 @@ import { WorkflowModule } from './workflows/workflow.module.js';
     SetupModule,
     HealthModule,
     WorkflowModule,
+    CredentialModule,
   ],
 })
 export class AppModule implements NestModule {
