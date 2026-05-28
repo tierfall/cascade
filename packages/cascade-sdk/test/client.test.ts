@@ -65,6 +65,22 @@ describe('CascadeClient', () => {
     );
   });
 
+  it('getRun() issues a GET to /runs/:id', async () => {
+    fetchMock.mockResolvedValueOnce(
+      new Response(JSON.stringify({ id: 'run_1', status: 'success', workflowId: 'wf_1' }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      }),
+    );
+    const client = new CascadeClient({ baseUrl: 'http://api.test' });
+    const run = await client.getRun('run_1');
+    expect(run.status).toBe('success');
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://api.test/runs/run_1',
+      expect.objectContaining({ method: 'GET' }),
+    );
+  });
+
   it('triggerWorkflow() POSTs JSON to /workflows/:id/runs', async () => {
     fetchMock.mockResolvedValueOnce(
       new Response(JSON.stringify({ id: 'run_1', status: 'queued' }), {

@@ -47,4 +47,18 @@ describe('parseArgs', () => {
   it('rejects a flag with no value', () => {
     expect(() => parseArgs(['run', 'wf_1', '--api-url'])).toThrow(/requires a value/i);
   });
+
+  it('parses --poll-interval as a positive number', () => {
+    const r = parseArgs(['run', 'wf_1', '--poll-interval', '2500']);
+    expect(r.pollIntervalMs).toBe(2500);
+  });
+
+  it('rejects --poll-interval that is not a positive number', () => {
+    expect(() => parseArgs(['run', 'wf_1', '--poll-interval', '0'])).toThrow(
+      /must be a positive number/i,
+    );
+    expect(() => parseArgs(['run', 'wf_1', '--poll-interval', 'abc'])).toThrow(
+      /must be a positive number/i,
+    );
+  });
 });
