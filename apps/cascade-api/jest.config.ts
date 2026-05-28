@@ -17,6 +17,11 @@ const config: Config = {
     // s3-storage.ts requires a real S3 endpoint to exercise. Coverage comes
     // from the cascade-api-e2e MinIO integration test, not the unit suite.
     '!src/storage/s3-storage.ts',
+    // RunService/RunController orchestrate Prisma transactions with the node
+    // registry; the executor is meaningfully tested only against real Postgres
+    // via cascade-api-e2e/src/runs.e2e-spec.ts.
+    '!src/runs/run.service.ts',
+    '!src/runs/run.controller.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'json-summary'],
