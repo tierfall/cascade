@@ -4,7 +4,6 @@
     "outDir": "./dist",
     "rootDir": ".",
     "noEmit": true,
-    "ignoreDeprecations": "6.0",
     "types": ["jest", "node"]
   },
   "include": ["src/**/*.ts", "test/**/*.ts", "jest.config.ts", "tsup.config.ts"],

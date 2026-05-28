@@ -31,7 +31,13 @@
       "@tierfall/cascade-sdk": ["packages/cascade-sdk/src/index.ts"],
       "@tierfall/cascade-tokens": ["packages/cascade-tokens/src/index.ts"],
       "@tierfall/cascade-ui": ["packages/cascade-ui/src/index.ts"]
-    }
+    },
+    // tsup's DTS bundler (rollup-plugin-dts) injects baseUrl into the effective
+    // compilerOptions when "paths" is present, which surfaces TS5101 in TS6+.
+    // Setting ignoreDeprecations here means every per-package tsconfig that
+    // extends this file inherits the silencing — no need to repeat it.
+    // Drop both lines once tsup ships a TS6-aware DTS path-resolution mode.
+    "ignoreDeprecations": "6.0"
   },
   "exclude": ["node_modules", "dist", "coverage", "**/*.test.ts", "**/*.spec.ts"]
 }

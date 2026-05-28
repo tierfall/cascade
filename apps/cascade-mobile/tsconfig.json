@@ -5,6 +5,10 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "jsx": "react-jsx",
+    // cascade-mobile extends Expo's base, not the workspace tsconfig.base.json.
+    // Expo's base still uses moduleResolution=node10 (TS6-deprecated). Keep
+    // this until Expo upgrades. Other packages inherit ignoreDeprecations from
+    // tsconfig.base.json and do not repeat it here.
     "ignoreDeprecations": "6.0",
     "paths": {
       "@tierfall/cascade-tokens": ["../../packages/cascade-tokens/src/index.ts"],
