@@ -4,7 +4,6 @@
     "outDir": "./dist",
     "rootDir": "../..",
     "types": ["jest", "node"],
-    "ignoreDeprecations": "6.0",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "module": "ESNext",

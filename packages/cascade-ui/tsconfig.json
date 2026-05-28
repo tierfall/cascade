@@ -4,7 +4,6 @@
     "outDir": "./dist",
     "rootDir": "../..",
     "noEmit": true,
-    "ignoreDeprecations": "6.0",
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "types": ["jest", "node"]

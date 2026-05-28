@@ -4,7 +4,6 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "declarationMap": false,
-    "ignoreDeprecations": "6.0",
     "lib": ["ES2022", "DOM"],
     "paths": {}
   },
