@@ -42,6 +42,10 @@ module.exports = composePlugins(
             '@nestjs/platform-express',
             'class-validator',
             'class-transformer',
+            // @nestjs/mapped-types pokes at class-transformer/{storage,cjs/storage}
+            // at load time even though we never call ApiProperty with a transform.
+            'class-transformer/storage',
+            'class-transformer/cjs/storage',
           ];
           if (!lazyImports.includes(resource)) return false;
           try {

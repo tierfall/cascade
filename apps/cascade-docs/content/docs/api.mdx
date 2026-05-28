@@ -1,0 +1,63 @@
+---
+title: HTTP API
+description: OpenAPI specification and reference for the Cascade HTTP API.
+---
+
+# HTTP API
+
+The Cascade API ships its own OpenAPI specification at runtime, so the spec
+always matches the deployed code (constraint #6 — API-first).
+
+## Where to find it
+
+When the API is running (default port 3000):
+
+- **Interactive UI:** http://localhost:3000/api — Swagger UI with try-it-out.
+- **JSON spec:** http://localhost:3000/api/openapi.json — raw OpenAPI 3 spec,
+  consumable by any tooling (Postman, Insomnia, openapi-generator, etc.).
+
+If you've changed the API port via `CASCADE_API_PORT`, substitute accordingly.
+
+## Authentication
+
+All endpoints except `/health` and `/setup` require a session cookie issued
+by `POST /auth/login`. In Swagger UI, click the **Authorize** button and
+paste a cookie value from your logged-in browser (DevTools → Application
+→ Cookies → `cascade_session`).
+
+## Endpoint groups
+
+The spec organizes endpoints into these tags:
+
+| Tag         | Routes                                                   |
+| ----------- | -------------------------------------------------------- |
+| `setup`     | `GET /setup`, `POST /setup`                              |
+| `auth`      | `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`  |
+| `workflows` | `GET/POST /workflows`, `GET/PATCH/DELETE /workflows/:id` |
+| `health`    | `GET /health`                                            |
+
+Endpoints land in the spec automatically as new controllers are added — there
+is no manual registration step.
+
+## Generating client SDKs
+
+Point your OpenAPI client generator at the running API:
+
+```bash
+# typescript-fetch via openapi-generator
+openapi-generator-cli generate \
+  -i http://localhost:3000/api/openapi.json \
+  -g typescript-fetch -o ./out
+
+# OR: prefer the workspace-owned @tierfall/cascade-sdk (smaller, hand-tuned)
+pnpm add @tierfall/cascade-sdk
+```
+
+The hand-written SDK at `@tierfall/cascade-sdk` covers the common workflows
+and is what `cascade-web` and `cascade-cli` use. The generated client is
+useful when you want a complete typed surface for every endpoint.
+
+## Versioning
+
+The OpenAPI document's `info.version` mirrors the API's release version
+(`0.1.0` while v0.1 is current). Breaking changes bump the major.
