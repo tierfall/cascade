@@ -1,0 +1,56 @@
+name: docs-vercel
+
+# Deploys cascade-docs to Vercel on push to main. Optional — the docs site is
+# also bundled into the docker compose stack at port 3001 for air-gapped
+# self-hosters (the canonical home), so this just gives the project a public
+# URL without forcing readers to spin up the compose stack.
+#
+# Required secrets (Settings → Secrets → Actions):
+#   VERCEL_TOKEN        — personal token from https://vercel.com/account/tokens
+#   VERCEL_ORG_ID       — `vercel link` writes it to .vercel/project.json
+#   VERCEL_PROJECT_ID   — same source as ORG_ID
+#
+# Without those secrets the job is skipped (the `if:` guard below).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/cascade-docs/**'
+      - 'packages/cascade-tokens/**'
+      - 'packages/cascade-ui/**'
+      - '.github/workflows/docs-vercel.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: ${{ vars.VERCEL_DEPLOY_ENABLED == 'true' }}
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Install Vercel CLI
+        run: pnpm add -g vercel@latest
+      - name: Pull Vercel build env
+        run: vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Build (Vercel)
+        run: vercel build --prod --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy to Vercel
+        run: vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
