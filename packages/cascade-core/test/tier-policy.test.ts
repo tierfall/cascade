@@ -55,4 +55,24 @@ describe('mergePolicy', () => {
     const merged = mergePolicy(defaultPolicy, {});
     expect(Object.isFrozen(merged)).toBe(true);
   });
+
+  it('freezes the allowedTiers array on the result', () => {
+    const merged = mergePolicy(defaultPolicy, {});
+    expect(Object.isFrozen(merged.allowedTiers)).toBe(true);
+    const escapeHatch = merged.allowedTiers as number[];
+    expect(() => escapeHatch.push(99)).toThrow(TypeError);
+  });
+
+  it('copies allowedTiers so mutating the source does not bleed into the result', () => {
+    const source = [0, 1];
+    const merged = mergePolicy(defaultPolicy, { allowedTiers: source });
+    source.push(99);
+    expect(merged.allowedTiers).toEqual([0, 1]);
+  });
+
+  it('freezes defaultPolicy.allowedTiers', () => {
+    expect(Object.isFrozen(defaultPolicy.allowedTiers)).toBe(true);
+    const escapeHatch = defaultPolicy.allowedTiers as number[];
+    expect(() => escapeHatch.push(99)).toThrow(TypeError);
+  });
 });
