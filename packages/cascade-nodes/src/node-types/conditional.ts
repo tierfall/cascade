@@ -1,40 +1,60 @@
+import jexl from 'jexl';
 import { z } from 'zod';
-import type { NodeHandler } from '../types.js';
+import type { NodeHandler, NodeResult } from '../types.js';
 
 const ConfigSchema = z.object({ expression: z.string().min(1) });
 
-export const conditionalHandler: NodeHandler<z.infer<typeof ConfigSchema>> = {
+type Config = z.infer<typeof ConfigSchema>;
+
+export class ConditionalExpressionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ConditionalExpressionError';
+  }
+}
+
+const engine = new jexl.Jexl();
+
+function compile(expression: string): ReturnType<typeof engine.compile> {
+  try {
+    return engine.compile(expression);
+  } catch (err) {
+    throw new ConditionalExpressionError(`jexl compile error: ${(err as Error).message}`);
+  }
+}
+
+export const conditionalHandler: NodeHandler<Config> = {
   validateConfig: (config) => {
     const parsed = ConfigSchema.safeParse(config);
-    return parsed.success
-      ? { success: true, data: parsed.data }
-      : { success: false, error: parsed.error };
+    if (!parsed.success) {
+      return { success: false, error: parsed.error };
+    }
+    try {
+      compile(parsed.data.expression);
+    } catch (err) {
+      const issue: z.ZodIssue = {
+        code: 'custom',
+        path: ['expression'],
+        message: (err as Error).message,
+      };
+      return { success: false, error: new z.ZodError([issue]) };
+    }
+    return { success: true, data: parsed.data };
   },
-  execute: (config, ctx) => {
-    const input = ctx.input ?? {};
-    // v0.1 stub: only supports `input.X (op) literal` form. Full expression engine
-    // is a v0.1 backlog issue (use jexl or expr-eval, decided in implementation PR).
-    const truthy = evaluateSimple(config.expression, input);
-    return Promise.resolve({ kind: 'branch', branch: truthy ? 'true' : 'false' });
+  execute: async (config, ctx): Promise<NodeResult> => {
+    const expr = compile(config.expression);
+    // Wrap input under an `input.` namespace so expressions can reference
+    // input.x. jexl runtime errors (missing properties, type mismatches)
+    // are coerced to false rather than thrown — this keeps a misconfigured
+    // conditional from crashing the whole run.
+    const context = { input: ctx.input ?? {} };
+    let result: unknown;
+    try {
+      result = await expr.eval(context);
+    } catch {
+      return { kind: 'branch', branch: 'false' };
+    }
+    const truthy = Boolean(result);
+    return { kind: 'branch', branch: truthy ? 'true' : 'false' };
   },
 };
-
-function evaluateSimple(expr: string, input: Record<string, unknown>): boolean {
-  // Named capture groups make types non-optional — regex is the single source of truth.
-  const match = /^input\.(?<key>\w+)\s*(?<op>>|<|>=|<=|===|!==)\s*(?<rhs>\d+(?:\.\d+)?)$/u.exec(
-    expr,
-  );
-  if (!match?.groups) return false;
-  const { key, op, rhs: rhsStr } = match.groups;
-  if (key === undefined || op === undefined || rhsStr === undefined) return false;
-  const lhsRaw = input[key];
-  if (typeof lhsRaw !== 'number') return false;
-  const rhs = Number(rhsStr);
-  if (op === '>') return lhsRaw > rhs;
-  if (op === '<') return lhsRaw < rhs;
-  if (op === '>=') return lhsRaw >= rhs;
-  if (op === '<=') return lhsRaw <= rhs;
-  if (op === '===') return lhsRaw === rhs;
-  // op === '!=='
-  return lhsRaw !== rhs;
-}
