@@ -10,11 +10,13 @@ import {
   UseFilters,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { Public } from '../auth/public.decorator.js';
 import { SetupBodySchema, type SetupBody } from './dto.js';
 import { SetupExceptionFilter } from './setup.exception-filter.js';
 import { SetupService } from './setup.service.js';
 
 @Controller('setup')
+@Public()
 @UseFilters(SetupExceptionFilter)
 export class SetupController {
   constructor(private readonly setupService: SetupService) {}
