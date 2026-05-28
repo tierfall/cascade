@@ -1,0 +1,101 @@
+---
+title: Demo workflow
+description: Walk through the tier-ramp demo end to end.
+---
+
+# Demo workflow
+
+Cascade ships with a two-vendor demo workflow that makes vendor-neutrality
+concrete. The demo runs the same prompt through a **local** TierFall adapter
+(Ollama, tier 0) and a **cloud** adapter (OpenAI-compatible tier 2 or
+Anthropic tier 3), with TierFall's policy engine choosing between them based
+on cost budget and adapter health.
+
+The full design rationale lives in
+`/docs/superpowers/specs/2026-05-22-cascade-kickoff-design.md` §10.3.
+
+## What you need
+
+- The base stack already running (`docker compose up -d` — see
+  [Getting Started](/docs/getting-started)).
+- For the **fallback** half of the demo: an `OPENAI_API_KEY` **or**
+  `ANTHROPIC_API_KEY` in `.env`. Local-only is fine if you're just here to
+  see Ollama working.
+
+## Start the demo profile
+
+The demo adds an `ollama` container to the compose stack. Pull and run it
+with the `demo` profile:
+
+```bash
+docker compose --profile demo up -d
+```
+
+The first run pulls the Ollama image (~3 GB) and downloads the
+`llama3.2:3b` model (~2 GB). Subsequent boots are instant.
+
+Wait for the `ollama` container's healthcheck to pass:
+
+```bash
+docker compose --profile demo ps ollama
+```
+
+## Import the workflow
+
+Until [B-API-RUN-EXECUTE (#7)](https://github.com/tierfall/cascade/issues/7)
+auto-seeds it, import the demo workflow manually. The JSON ships with
+`cascade-api` at `apps/cascade-api/src/assets/demo-workflow.json`.
+
+```bash
+# Replace <session-cookie> with the cascade_session cookie value from your
+# logged-in browser session (DevTools → Application → Cookies).
+curl -X POST http://localhost:3000/workflows \
+  -H 'Content-Type: application/json' \
+  -H 'Cookie: cascade_session=<session-cookie>' \
+  -d @apps/cascade-api/src/assets/demo-workflow.json
+```
+
+## Run it
+
+On the canvas (http://localhost:3001/workflows/demo-tier-ramp):
+
+1. Click **Run** on the canvas toolbar.
+2. Provide an input payload like `{ "text": "TypeScript inference handles ..." }`.
+3. Watch the `summarize` node briefly turn yellow (queued) → blue (running) →
+   green (success).
+
+## What to observe
+
+After the run completes, the canvas annotates the `summarize` node with the
+adapter that actually handled the call:
+
+- **Tier 0 (ollama)** if Ollama was healthy and within budget — typical case.
+- **Tier 2 (openai-compatible)** or **Tier 3 (anthropic)** if Ollama timed
+  out or returned an error and a fallback API key was configured.
+
+The `wrap` transform node lifts this attribution into the output payload
+(`{ summary, vendor }`) so you can see which adapter won without opening
+the run-history panel.
+
+## Verifying the fallback path
+
+To force the fallback chain without taking Ollama down:
+
+1. In the **demo workflow** definition, lower the `maxCostUsd` budget below
+   the cloud adapter's per-call cost (e.g. `0.0001`). TierFall will skip the
+   cloud tier when it can't satisfy the budget.
+2. Or stop the `ollama` container (`docker compose --profile demo stop
+ollama`) and re-run.
+
+You should see the `vendor` field in the output flip from `ollama` to your
+configured cloud adapter, with the canvas updating its tier badge to match.
+
+## Next
+
+- Author your own workflow — see [Architecture](/docs/architecture) for the
+  schema reference and node types.
+- Trigger runs from a script via the
+  [SDK](https://www.npmjs.com/package/@tierfall/cascade-sdk):
+  `new CascadeClient({ baseUrl }).triggerWorkflow('demo-tier-ramp', {...})`.
+- Trigger from the shell via the CLI:
+  `cascade run demo-tier-ramp --wait --input '{"text":"..."}'`.
