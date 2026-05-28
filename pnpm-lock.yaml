@@ -171,6 +171,9 @@ importers:
       '@tierfall/cascade-core':
         specifier: workspace:*
         version: link:../../packages/cascade-core
+      '@tierfall/cascade-nodes':
+        specifier: workspace:*
+        version: link:../../packages/cascade-nodes
       argon2:
         specifier: ^0.41.1
         version: 0.41.1
