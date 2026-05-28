@@ -8,6 +8,7 @@ import { HealthModule } from './health/health.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { SecretModule } from './secrets/secret.module.js';
 import { SetupModule } from './setup/setup.module.js';
+import { StorageModule } from './storage/storage.module.js';
 import { WorkflowModule } from './workflows/workflow.module.js';
 
 @Module({
@@ -21,6 +22,7 @@ import { WorkflowModule } from './workflows/workflow.module.js';
     HealthModule,
     WorkflowModule,
     CredentialModule,
+    StorageModule,
   ],
 })
 export class AppModule implements NestModule {
