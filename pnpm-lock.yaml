@@ -509,6 +509,9 @@ importers:
       '@tierfall/core':
         specifier: ^0.1.0
         version: 0.1.0
+      jexl:
+        specifier: 2.3.0
+        version: 2.3.0
       jsonata:
         specifier: 2.2.1
         version: 2.2.1
@@ -522,6 +525,9 @@ importers:
       '@types/jest':
         specifier: 29.5.14
         version: 29.5.14
+      '@types/jexl':
+        specifier: 2.3.4
+        version: 2.3.4
       '@types/node':
         specifier: 24.0.0
         version: 24.0.0
@@ -4330,6 +4336,9 @@ packages:
   '@types/jest@29.5.14':
     resolution: {integrity: sha512-ZN+4sdnLUbo8EVvVc2ao0GFW6oVrQRPn4K2lglySj7APvSrgzxHiNNK99us4WDMi57xxA2yggblIAMNhXOotLQ==}
 
+  '@types/jexl@2.3.4':
+    resolution: {integrity: sha512-3BU5DbkPvwqOeW8kZcB9Bvn5bspTFY3Lo0yBS6ephuI8kVSpCjzbGtRPbWnvdbr67tMvXDxiJRcL3fwbz/6+PQ==}
+
   '@types/jsdom@20.0.1':
     resolution: {integrity: sha512-d0r18sZPmMQr1eG35u12FZfhIXNrnsPU/g5wvRKCUf/tOGilKKwYMYGqh33BNR6ba+2gkHw1EUiHoN3mn7E5IQ==}
 
@@ -7507,6 +7516,9 @@ packages:
     peerDependenciesMeta:
       node-notifier:
         optional: true
+
+  jexl@2.3.0:
+    resolution: {integrity: sha512-ecqln4kTWNkMwbFvTukOMDq1jy1GcPzvshhMp/s4pxU86xdLDq7HbDRa87DfMfbSAOS8V6EwvCdfs0S+w/iycA==}
 
   jimp-compact@0.16.1:
     resolution: {integrity: sha512-dZ6Ra7u1G8c4Letq/B5EzAxj4tLFHL+cGtdpR+PVm4yzPDj+lCk+AbivWt1eOM+ikzkowtyV7qSqX6qr3t71Ww==}
@@ -15901,6 +15913,8 @@ snapshots:
       expect: 29.7.0
       pretty-format: 29.7.0
 
+  '@types/jexl@2.3.4': {}
+
   '@types/jsdom@20.0.1':
     dependencies:
       '@types/node': 24.0.0
@@ -19737,6 +19751,10 @@ snapshots:
       - babel-plugin-macros
       - supports-color
       - ts-node
+
+  jexl@2.3.0:
+    dependencies:
+      '@babel/runtime': 7.29.2
 
   jimp-compact@0.16.1: {}
 
