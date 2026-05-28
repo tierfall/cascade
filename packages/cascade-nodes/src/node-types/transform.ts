@@ -1,16 +1,49 @@
+import jsonata from 'jsonata';
 import { z } from 'zod';
-import type { NodeHandler } from '../types.js';
+import type { NodeHandler, NodeResult } from '../types.js';
 
 const ConfigSchema = z.object({ expression: z.string().min(1) });
 
-export const transformHandler: NodeHandler<z.infer<typeof ConfigSchema>> = {
+type Config = z.infer<typeof ConfigSchema>;
+
+export class TransformExpressionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'TransformExpressionError';
+  }
+}
+
+function compile(expression: string): ReturnType<typeof jsonata> {
+  try {
+    return jsonata(expression);
+  } catch (err) {
+    // jsonata always throws an Error subclass with a .message.
+    const detail = (err as Error).message;
+    throw new TransformExpressionError(`jsonata compile error: ${detail}`);
+  }
+}
+
+export const transformHandler: NodeHandler<Config> = {
   validateConfig: (config) => {
     const parsed = ConfigSchema.safeParse(config);
-    return parsed.success
-      ? { success: true, data: parsed.data }
-      : { success: false, error: parsed.error };
+    if (!parsed.success) {
+      return { success: false, error: parsed.error };
+    }
+    try {
+      compile(parsed.data.expression);
+    } catch (err) {
+      const issue: z.ZodIssue = {
+        code: 'custom',
+        path: ['expression'],
+        message: (err as Error).message,
+      };
+      return { success: false, error: new z.ZodError([issue]) };
+    }
+    return { success: true, data: parsed.data };
   },
-  execute: async (_config, ctx) =>
-    // v0.1 stub: passthrough. jsonata wiring is a backlog issue.
-    Promise.resolve({ kind: 'success', output: ctx.input ?? {} }),
+  execute: async (config, ctx): Promise<NodeResult> => {
+    const expr = compile(config.expression);
+    const output = (await expr.evaluate(ctx.input ?? {})) as unknown;
+    return { kind: 'success', output: output ?? null };
+  },
 };
