@@ -24,6 +24,10 @@ export class CascadeClient {
     return this.request<RunSummary>('POST', `/workflows/${workflowId}/runs`, input);
   }
 
+  async getRun(runId: string): Promise<RunSummary> {
+    return this.request<RunSummary>('GET', `/runs/${runId}`);
+  }
+
   private async request<T>(method: 'GET' | 'POST', path: string, body?: unknown): Promise<T> {
     const headers: Record<string, string> = { Accept: 'application/json' };
     if (this.apiToken !== undefined) headers.Authorization = `Bearer ${this.apiToken}`;

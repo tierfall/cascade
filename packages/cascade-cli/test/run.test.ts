@@ -1,7 +1,14 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { runCommand } from '../src/run.js';
+import { RunFailedError, runCommand } from '../src/run.js';
 
-describe('runCommand', () => {
+function jsonResponse(body: unknown, status = 200): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'content-type': 'application/json' },
+  });
+}
+
+describe('runCommand (no --wait)', () => {
   const fetchMock = jest.fn<typeof fetch>();
   beforeEach(() => {
     fetchMock.mockReset();
@@ -10,25 +17,20 @@ describe('runCommand', () => {
 
   it('triggers the workflow and prints the run id', async () => {
     fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ id: 'run_42', status: 'queued', workflowId: 'wf_1' }), {
-        status: 202,
-        headers: { 'content-type': 'application/json' },
-      }),
+      jsonResponse({ id: 'run_42', status: 'queued', workflowId: 'wf_1' }, 202),
     );
     const logs: string[] = [];
-    await runCommand(
+    const result = await runCommand(
       { workflowId: 'wf_1', apiUrl: 'http://api.test', input: { x: 1 }, wait: false },
       (m) => logs.push(m),
     );
+    expect(result.id).toBe('run_42');
     expect(logs.join('\n')).toContain('run_42');
   });
 
   it('forwards api-token to the SDK as Bearer', async () => {
     fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ id: 'r', status: 'queued', workflowId: 'wf_1' }), {
-        status: 202,
-        headers: { 'content-type': 'application/json' },
-      }),
+      jsonResponse({ id: 'r', status: 'queued', workflowId: 'wf_1' }, 202),
     );
     await runCommand(
       { workflowId: 'wf_1', apiUrl: 'http://api.test', apiToken: 't0k', wait: false },
@@ -43,28 +45,77 @@ describe('runCommand', () => {
   });
 
   it('throws on API error', async () => {
-    fetchMock.mockResolvedValueOnce(
-      new Response('{"error":"x"}', {
-        status: 500,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
+    fetchMock.mockResolvedValueOnce(jsonResponse({ error: 'x' }, 500));
     await expect(
       runCommand({ workflowId: 'wf_1', apiUrl: 'http://api.test', wait: false }, () => undefined),
     ).rejects.toThrow();
   });
+});
 
-  it('logs --wait notice when wait is true', async () => {
-    fetchMock.mockResolvedValueOnce(
-      new Response(JSON.stringify({ id: 'r2', status: 'queued', workflowId: 'wf_1' }), {
-        status: 202,
-        headers: { 'content-type': 'application/json' },
-      }),
-    );
+describe('runCommand (--wait)', () => {
+  const fetchMock = jest.fn<typeof fetch>();
+  beforeEach(() => {
+    fetchMock.mockReset();
+    (globalThis as { fetch: typeof fetch }).fetch = fetchMock;
+  });
+
+  it('polls /runs/:id until success', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ id: 'r', status: 'queued', workflowId: 'w' }, 202))
+      .mockResolvedValueOnce(jsonResponse({ id: 'r', status: 'running', workflowId: 'w' }))
+      .mockResolvedValueOnce(jsonResponse({ id: 'r', status: 'success', workflowId: 'w' }));
+    const sleep = jest.fn<(ms: number) => Promise<void>>().mockResolvedValue(undefined);
     const logs: string[] = [];
-    await runCommand({ workflowId: 'wf_1', apiUrl: 'http://api.test', wait: true }, (m) =>
-      logs.push(m),
+    const result = await runCommand(
+      {
+        workflowId: 'w',
+        apiUrl: 'http://api.test',
+        wait: true,
+        pollIntervalMs: 50,
+        sleep,
+      },
+      (m) => logs.push(m),
     );
-    expect(logs.join('\n')).toContain('B-CLI-WAIT');
+    expect(result.status).toBe('success');
+    expect(sleep).toHaveBeenCalledTimes(2);
+    expect(sleep).toHaveBeenCalledWith(50);
+    expect(fetchMock).toHaveBeenCalledTimes(3);
+  });
+
+  it('throws RunFailedError when the run terminates with status error', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ id: 'r', status: 'queued', workflowId: 'w' }, 202))
+      .mockResolvedValueOnce(jsonResponse({ id: 'r', status: 'error', workflowId: 'w' }));
+    const sleep = jest.fn<(ms: number) => Promise<void>>().mockResolvedValue(undefined);
+    await expect(
+      runCommand(
+        { workflowId: 'w', apiUrl: 'http://api.test', wait: true, sleep },
+        () => undefined,
+      ),
+    ).rejects.toBeInstanceOf(RunFailedError);
+  });
+
+  it('returns immediately when the trigger response is already terminal', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ id: 'r', status: 'success', workflowId: 'w' }, 202),
+    );
+    const sleep = jest.fn<(ms: number) => Promise<void>>().mockResolvedValue(undefined);
+    const result = await runCommand(
+      { workflowId: 'w', apiUrl: 'http://api.test', wait: true, sleep },
+      () => undefined,
+    );
+    expect(result.status).toBe('success');
+    expect(sleep).not.toHaveBeenCalled();
+  });
+
+  it('uses the default 1000ms sleep when none is injected', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({ id: 'r', status: 'queued', workflowId: 'w' }, 202))
+      .mockResolvedValueOnce(jsonResponse({ id: 'r', status: 'success', workflowId: 'w' }));
+    const result = await runCommand(
+      { workflowId: 'w', apiUrl: 'http://api.test', wait: true, pollIntervalMs: 1 },
+      () => undefined,
+    );
+    expect(result.status).toBe('success');
   });
 });

@@ -5,6 +5,7 @@ export interface ParsedArgs {
   apiToken?: string;
   input?: Record<string, unknown>;
   wait: boolean;
+  pollIntervalMs?: number;
 }
 
 export function parseArgs(argv: readonly string[]): ParsedArgs {
@@ -37,6 +38,14 @@ export function parseArgs(argv: readonly string[]): ParsedArgs {
           throw new Error('invalid JSON for --input');
         }
         break;
+      case '--poll-interval': {
+        const n = Number(value);
+        if (!Number.isFinite(n) || n <= 0) {
+          throw new Error('--poll-interval must be a positive number (milliseconds)');
+        }
+        result.pollIntervalMs = n;
+        break;
+      }
       default:
         throw new Error(`unknown flag: ${String(flag)}`);
     }
