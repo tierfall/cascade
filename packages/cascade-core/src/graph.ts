@@ -22,33 +22,48 @@ function adjacency(graph: Graph): Map<string, string[]> {
   return adj;
 }
 
-export function hasCycle(graph: Graph): boolean {
+export function findCycle(graph: Graph): readonly string[] | null {
   const adj = adjacency(graph);
   const visited = new Set<string>();
-  const stack = new Set<string>();
-  const dfs = (id: string): boolean => {
-    if (stack.has(id)) return true;
-    if (visited.has(id)) return false;
+  const stack: string[] = [];
+  const stackSet = new Set<string>();
+
+  const dfs = (id: string): readonly string[] | null => {
+    if (stackSet.has(id)) {
+      const start = stack.indexOf(id);
+      return [...stack.slice(start), id];
+    }
+    if (visited.has(id)) return null;
     visited.add(id);
-    stack.add(id);
+    stack.push(id);
+    stackSet.add(id);
     const out = adj.get(id);
     if (out) {
       for (const next of out) {
-        if (dfs(next)) return true;
+        const cycle = dfs(next);
+        if (cycle !== null) return cycle;
       }
     }
-    stack.delete(id);
-    return false;
+    stack.pop();
+    stackSet.delete(id);
+    return null;
   };
+
   for (const node of graph.nodes) {
-    if (dfs(node.id)) return true;
+    const cycle = dfs(node.id);
+    if (cycle !== null) return cycle;
   }
-  return false;
+  return null;
+}
+
+export function hasCycle(graph: Graph): boolean {
+  return findCycle(graph) !== null;
 }
 
 export function topologicalSort(graph: Graph): string[] {
-  if (hasCycle(graph)) {
-    throw new CycleDetectedError([]);
+  const cycle = findCycle(graph);
+  if (cycle !== null) {
+    throw new CycleDetectedError(cycle);
   }
   const adj = adjacency(graph);
   const indeg = new Map<string, number>();
