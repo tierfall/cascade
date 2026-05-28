@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import fc from 'fast-check';
-import { hasCycle, reachableFrom, topologicalSort } from '../src/graph.js';
+import { CycleDetectedError } from '../src/errors.js';
+import { findCycle, hasCycle, reachableFrom, topologicalSort } from '../src/graph.js';
 
 describe('hasCycle', () => {
   it('returns false on an empty graph', () => {
@@ -62,16 +63,66 @@ describe('topologicalSort', () => {
     expect(sorted).toEqual(['a', 'b', 'c']);
   });
 
-  it('throws on a cyclic graph', () => {
-    expect(() =>
+  it('throws on a cyclic graph with the reconstructed cycle path', () => {
+    let caught: unknown = null;
+    try {
       topologicalSort({
         nodes: [{ id: 'a' }, { id: 'b' }],
         edges: [
           { from: 'a', to: 'b' },
           { from: 'b', to: 'a' },
         ],
+      });
+    } catch (err) {
+      caught = err;
+    }
+    expect(caught).toBeInstanceOf(CycleDetectedError);
+    const cycle = (caught as CycleDetectedError).cycle;
+    expect(cycle.length).toBeGreaterThan(0);
+    expect(cycle[0]).toBe(cycle[cycle.length - 1]);
+    expect(new Set(cycle).size).toBe(cycle.length - 1);
+  });
+});
+
+describe('findCycle', () => {
+  it('returns null on an acyclic graph', () => {
+    expect(
+      findCycle({
+        nodes: [{ id: 'a' }, { id: 'b' }],
+        edges: [{ from: 'a', to: 'b' }],
       }),
-    ).toThrow(/cycle/i);
+    ).toBeNull();
+  });
+
+  it('returns a self-loop as [id, id]', () => {
+    const cycle = findCycle({ nodes: [{ id: 'a' }], edges: [{ from: 'a', to: 'a' }] });
+    expect(cycle).toEqual(['a', 'a']);
+  });
+
+  it('returns the cycle path for a 3-node back-edge', () => {
+    const cycle = findCycle({
+      nodes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+      edges: [
+        { from: 'a', to: 'b' },
+        { from: 'b', to: 'c' },
+        { from: 'c', to: 'a' },
+      ],
+    });
+    expect(cycle).toEqual(['a', 'b', 'c', 'a']);
+  });
+
+  it('returns only the cycle suffix, not the lead-in', () => {
+    // a -> b -> c -> d -> c   (cycle is c -> d -> c, "a" and "b" lead in)
+    const cycle = findCycle({
+      nodes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }],
+      edges: [
+        { from: 'a', to: 'b' },
+        { from: 'b', to: 'c' },
+        { from: 'c', to: 'd' },
+        { from: 'd', to: 'c' },
+      ],
+    });
+    expect(cycle).toEqual(['c', 'd', 'c']);
   });
 });
 
