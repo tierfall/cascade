@@ -22,6 +22,9 @@ const config: Config = {
     // via cascade-api-e2e/src/runs.e2e-spec.ts.
     '!src/runs/run.service.ts',
     '!src/runs/run.controller.ts',
+    // WebhookService runs raw jsonb queries; tested via integration only.
+    '!src/webhooks/webhook.service.ts',
+    '!src/webhooks/webhook.controller.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'json-summary'],

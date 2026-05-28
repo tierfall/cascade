@@ -11,6 +11,7 @@ import { RunModule } from './runs/run.module.js';
 import { SecretModule } from './secrets/secret.module.js';
 import { SetupModule } from './setup/setup.module.js';
 import { StorageModule } from './storage/storage.module.js';
+import { WebhookModule } from './webhooks/webhook.module.js';
 import { WorkflowModule } from './workflows/workflow.module.js';
 
 @Module({
@@ -27,6 +28,7 @@ import { WorkflowModule } from './workflows/workflow.module.js';
     StorageModule,
     LimitsModule,
     RunModule,
+    WebhookModule,
   ],
 })
 export class AppModule implements NestModule {
