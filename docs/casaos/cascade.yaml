@@ -1,0 +1,57 @@
+name: cascade
+title: Cascade
+icon: https://raw.githubusercontent.com/tierfall/cascade/main/apps/cascade-web/public/icon-512.png
+tagline: Self-hosted visual AI workflow editor
+overview: |
+  Cascade is an OSS visual AI workflow editor. Drag-drop nodes, route LLM
+  calls through TierFall's local-first tier ramp, run workflows on a
+  schedule or via webhook. Single-admin first-boot setup wizard.
+tagline_color: '#7c3aed'
+developer: tierfall
+website: https://github.com/tierfall/cascade
+container:
+  image: ghcr.io/tierfall/cascade-api:dev
+  shell: sh
+  privileged: false
+  network_mode: bridge
+  web_ui:
+    http: '3001'
+    path: /
+  ports:
+    - container: '3000'
+      host: '3000'
+      type: tcp
+      desc: API + WebSocket
+    - container: '3001'
+      host: '3001'
+      type: tcp
+      desc: Web UI
+  envs:
+    - container: POSTGRES_USER
+      host: cascade
+    - container: POSTGRES_PASSWORD
+      host: changeme_on_first_boot
+    - container: POSTGRES_DB
+      host: cascade
+    - container: DATABASE_URL
+      host: postgres://cascade:changeme_on_first_boot@postgres:5432/cascade?schema=public
+    - container: REDIS_URL
+      host: redis://redis:6379
+    - container: STORAGE_DRIVER
+      host: local
+  volumes:
+    - container: /data/storage
+      host: /DATA/AppData/cascade/storage
+      type: bind
+      mode: rw
+  healthcheck:
+    test: ['CMD', 'wget', '-qO-', 'http://localhost:3000/health']
+    interval: 10s
+    timeout: 3s
+    retries: 5
+category:
+  - Productivity
+  - Developer
+architectures:
+  - amd64
+  - arm64
