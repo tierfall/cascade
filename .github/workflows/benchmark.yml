@@ -1,0 +1,94 @@
+name: benchmark
+
+# Non-blocking throughput benchmark. Triggers automatically on PRs that touch
+# the executor / queue / workflow path; manual dispatch supported. Posts a
+# comment on the PR with p50 / p99 latency over N demo-workflow runs. NOT a
+# release gate — if the workflow fails the PR is unaffected.
+
+on:
+  pull_request:
+    paths:
+      - 'apps/cascade-api/src/runs/**'
+      - 'apps/cascade-api/src/workflows/**'
+      - 'packages/cascade-nodes/**'
+      - 'packages/cascade-core/**'
+      - '.github/workflows/benchmark.yml'
+      - 'tools/benchmark/**'
+  workflow_dispatch:
+    inputs:
+      runs:
+        description: 'How many runs to execute'
+        default: '50'
+        required: false
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    continue-on-error: true # never gate the release on this
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: cascade
+          POSTGRES_USER: cascade
+          POSTGRES_PASSWORD: cascade
+        options: >-
+          --health-cmd "pg_isready -U cascade"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+        ports:
+          - 6379:6379
+    steps:
+      - uses: actions/checkout@v6
+        with: { fetch-depth: 0 }
+      - uses: pnpm/action-setup@v6
+        with: { version: 10.33.0 }
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter cascade-api exec prisma generate
+      - name: Run benchmark (writes results/benchmark.json)
+        env:
+          DATABASE_URL: postgres://cascade:cascade@localhost:5432/cascade?schema=public
+          REDIS_URL: redis://localhost:6379
+          BENCHMARK_RUNS: ${{ github.event.inputs.runs || '50' }}
+        run: node tools/benchmark/run.mjs
+      - name: Post results comment
+        if: github.event_name == 'pull_request' && always()
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const fs = require('node:fs');
+            let body = '## Benchmark (non-blocking)\n\n';
+            try {
+              const r = JSON.parse(fs.readFileSync('results/benchmark.json', 'utf8'));
+              body += `- runs: \`${r.runs}\`\n`;
+              body += `- p50 latency: \`${r.p50_ms}\` ms\n`;
+              body += `- p99 latency: \`${r.p99_ms}\` ms\n`;
+              body += `- throughput: \`${r.throughput_rps}\` runs/s\n`;
+            } catch (err) {
+              body += `Benchmark did not produce results — see job logs.\n`;
+            }
+            await github.rest.issues.createComment({
+              ...context.repo,
+              issue_number: context.payload.pull_request.number,
+              body,
+            });

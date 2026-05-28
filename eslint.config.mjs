@@ -168,4 +168,19 @@ export default tseslint.config(
       ],
     },
   },
+  // tools/**/*.mjs run with `node` directly. They need Node globals
+  // (process, console, etc.) which the default config doesn't expose.
+  {
+    files: ['tools/**/*.mjs'],
+    languageOptions: {
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        Buffer: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        global: 'readonly',
+      },
+    },
+  },
 );
