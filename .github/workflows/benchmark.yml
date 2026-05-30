@@ -73,7 +73,7 @@ jobs:
         run: node tools/benchmark/run.mjs
       - name: Post results comment
         if: github.event_name == 'pull_request' && always()
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('node:fs');
