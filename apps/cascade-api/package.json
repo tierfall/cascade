@@ -35,7 +35,7 @@
   "devDependencies": {
     "@jest/globals": "29.7.0",
     "@nestjs/schematics": "10.2.3",
-    "@nestjs/testing": "10.4.15",
+    "@nestjs/testing": "11.1.27",
     "@types/cookie-parser": "1.4.10",
     "@types/express": "5.0.0",
     "@types/jest": "29.5.14",
